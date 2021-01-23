@@ -1,0 +1,23 @@
+# Server configurations
+server:
+  host: "localhost"
+  port: 8081
+
+
+# databaseName credentials
+databaseName:
+  acawsDBName: "awacs"
+  acawsSmartDBName: "awacs_smart"
+  smartStockistDBName: "SmartStockist"
+
+# databaseConfig credentials
+databaseConfig:
+  host: "localhost"
+  port: 1433
+  user: "sqlserver"
+  pass: "test"
+
+# Grpc configurations
+grpcConfig:
+  host: "127.0.0.1"
+  port: 9000

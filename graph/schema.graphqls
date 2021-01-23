@@ -1,0 +1,110 @@
+# GraphQL schema example
+#
+# https://gqlgen.com/getting-started/
+
+type Product {
+  ProductCode: ID!
+  ProductName: String!
+  BRAND: String!
+  Company:String!
+  Quantity:Float!
+  FreeQuantity:Float
+  SchemePercentage:Float
+  Closing:Float
+  DRUG_TYPE: String
+  STRENGTH:String
+  PACK:String!
+  MRP:Float!
+  PTR:Float
+  PTS:Float
+  Distributors:[User!]!
+}
+
+type User {
+id: ID!
+changePasswordOnLogon: Boolean
+pictureId: Int
+workspaceId: Int!
+username: String!
+role: String!
+name: String!
+address1: String!
+address2: String
+address3: String
+cityId: Int!
+stateId: Int!
+country: String!
+phoneNo: String!
+mobile: String!
+email: String!
+isLiveorderBlocked: Boolean
+isVerify: Boolean
+isAdmin: Boolean
+isAdminDelegate: String
+isAdhoc: String
+deviceId: String
+gCMRegisterKey: String
+type: String
+loginType: String!
+providerId: Int
+providerType: String
+awacsId: String
+pOBOTP: String
+gSTIN: String
+pincode: String
+registrationId: String
+source: String
+sourceType: String
+signSource: String
+signDetail: String
+deleted: String
+deletedBy: Int
+deletedOn: String
+lastActivity: String
+appVersion: String
+oSVersion: String
+platform: String
+userKind: String
+bank: String
+iFSCCode: String
+userId: String!
+}
+
+
+
+type Order {
+  	id:ID!
+	Source:String
+	buyerId:String
+	orderNumber:String!
+	orderDate:String
+	supplierId:String!
+	takenOn: String
+	deliveryOption: String
+	deliveryMode:String
+	remarks:String
+	workspaceId:Int
+	status:String
+	invoiceNumber:String
+	isBounced:Boolean
+ products:[Product!]!
+}
+
+
+type Query {
+  products(ProductName: String!, Type:String!): [Product!]!
+  productByItemCode(ItemCode: ID!): [Product!]!
+  userById(ID:ID!):User!
+  userByUserName(username: String!):User!
+  userByMobile(mobile: String!):User!
+  orderByUserId(buyerId: String!):[Order!]!
+}
+
+input NewProduct {
+  ProductName: String!
+}
+
+type Mutation {
+  createProduct(input: NewProduct!): Product!
+
+}
