@@ -7,6 +7,8 @@ WORKDIR $GOPATH/src/github.com/brkelkar/awacs_smart_api_service
 COPY . .
 
 ENV GIN_MODE=release
+ENV SERVER_PORT=8080
+
 # Install the package
 RUN go build -tags=jsoniter .
 # This container exposes port 8080 to the outside world
