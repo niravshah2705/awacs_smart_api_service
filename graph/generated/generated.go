@@ -43,6 +43,19 @@ type DirectiveRoot struct {
 }
 
 type ComplexityRoot struct {
+	AWACSProduct struct {
+		Brand       func(childComplexity int) int
+		Company     func(childComplexity int) int
+		DrugType    func(childComplexity int) int
+		Mrp         func(childComplexity int) int
+		Pack        func(childComplexity int) int
+		ProductCode func(childComplexity int) int
+		ProductName func(childComplexity int) int
+		Ptr         func(childComplexity int) int
+		Pts         func(childComplexity int) int
+		Strength    func(childComplexity int) int
+	}
+
 	Mutation struct {
 		CreateProduct func(childComplexity int, input model.NewProduct) int
 	}
@@ -66,7 +79,6 @@ type ComplexityRoot struct {
 	}
 
 	Product struct {
-		Brand            func(childComplexity int) int
 		Closing          func(childComplexity int) int
 		Company          func(childComplexity int) int
 		Distributors     func(childComplexity int) int
@@ -86,7 +98,8 @@ type ComplexityRoot struct {
 	Query struct {
 		OrderByUserID     func(childComplexity int, buyerID string) int
 		ProductByItemCode func(childComplexity int, itemCode string) int
-		Products          func(childComplexity int, productName string, typeArg string) int
+		Products          func(childComplexity int, productName string) int
+		ProductsAwacs     func(childComplexity int, productName string) int
 		UserByID          func(childComplexity int, id string) int
 		UserByMobile      func(childComplexity int, mobile string) int
 		UserByUserName    func(childComplexity int, username string) int
@@ -100,6 +113,7 @@ type ComplexityRoot struct {
 		AwacsID               func(childComplexity int) int
 		Bank                  func(childComplexity int) int
 		ChangePasswordOnLogon func(childComplexity int) int
+		City                  func(childComplexity int) int
 		CityID                func(childComplexity int) int
 		Country               func(childComplexity int) int
 		Deleted               func(childComplexity int) int
@@ -134,6 +148,7 @@ type ComplexityRoot struct {
 		SignSource            func(childComplexity int) int
 		Source                func(childComplexity int) int
 		SourceType            func(childComplexity int) int
+		State                 func(childComplexity int) int
 		StateID               func(childComplexity int) int
 		Type                  func(childComplexity int) int
 		UserID                func(childComplexity int) int
@@ -147,8 +162,9 @@ type MutationResolver interface {
 	CreateProduct(ctx context.Context, input model.NewProduct) (*model.Product, error)
 }
 type QueryResolver interface {
-	Products(ctx context.Context, productName string, typeArg string) ([]*model.Product, error)
-	ProductByItemCode(ctx context.Context, itemCode string) ([]*model.Product, error)
+	Products(ctx context.Context, productName string) ([]*model.Product, error)
+	ProductsAwacs(ctx context.Context, productName string) ([]*model.AWACSProduct, error)
+	ProductByItemCode(ctx context.Context, itemCode string) ([]*model.AWACSProduct, error)
 	UserByID(ctx context.Context, id string) (*model.User, error)
 	UserByUserName(ctx context.Context, username string) (*model.User, error)
 	UserByMobile(ctx context.Context, mobile string) (*model.User, error)
@@ -169,6 +185,76 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 	ec := executionContext{nil, e}
 	_ = ec
 	switch typeName + "." + field {
+
+	case "AWACSProduct.brand":
+		if e.complexity.AWACSProduct.Brand == nil {
+			break
+		}
+
+		return e.complexity.AWACSProduct.Brand(childComplexity), true
+
+	case "AWACSProduct.company":
+		if e.complexity.AWACSProduct.Company == nil {
+			break
+		}
+
+		return e.complexity.AWACSProduct.Company(childComplexity), true
+
+	case "AWACSProduct.drugType":
+		if e.complexity.AWACSProduct.DrugType == nil {
+			break
+		}
+
+		return e.complexity.AWACSProduct.DrugType(childComplexity), true
+
+	case "AWACSProduct.mrp":
+		if e.complexity.AWACSProduct.Mrp == nil {
+			break
+		}
+
+		return e.complexity.AWACSProduct.Mrp(childComplexity), true
+
+	case "AWACSProduct.pack":
+		if e.complexity.AWACSProduct.Pack == nil {
+			break
+		}
+
+		return e.complexity.AWACSProduct.Pack(childComplexity), true
+
+	case "AWACSProduct.productCode":
+		if e.complexity.AWACSProduct.ProductCode == nil {
+			break
+		}
+
+		return e.complexity.AWACSProduct.ProductCode(childComplexity), true
+
+	case "AWACSProduct.productName":
+		if e.complexity.AWACSProduct.ProductName == nil {
+			break
+		}
+
+		return e.complexity.AWACSProduct.ProductName(childComplexity), true
+
+	case "AWACSProduct.ptr":
+		if e.complexity.AWACSProduct.Ptr == nil {
+			break
+		}
+
+		return e.complexity.AWACSProduct.Ptr(childComplexity), true
+
+	case "AWACSProduct.pts":
+		if e.complexity.AWACSProduct.Pts == nil {
+			break
+		}
+
+		return e.complexity.AWACSProduct.Pts(childComplexity), true
+
+	case "AWACSProduct.strength":
+		if e.complexity.AWACSProduct.Strength == nil {
+			break
+		}
+
+		return e.complexity.AWACSProduct.Strength(childComplexity), true
 
 	case "Mutation.createProduct":
 		if e.complexity.Mutation.CreateProduct == nil {
@@ -252,7 +338,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Order.Remarks(childComplexity), true
 
-	case "Order.Source":
+	case "Order.source":
 		if e.complexity.Order.Source == nil {
 			break
 		}
@@ -287,105 +373,98 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Order.WorkspaceID(childComplexity), true
 
-	case "Product.BRAND":
-		if e.complexity.Product.Brand == nil {
-			break
-		}
-
-		return e.complexity.Product.Brand(childComplexity), true
-
-	case "Product.Closing":
+	case "Product.closing":
 		if e.complexity.Product.Closing == nil {
 			break
 		}
 
 		return e.complexity.Product.Closing(childComplexity), true
 
-	case "Product.Company":
+	case "Product.company":
 		if e.complexity.Product.Company == nil {
 			break
 		}
 
 		return e.complexity.Product.Company(childComplexity), true
 
-	case "Product.Distributors":
+	case "Product.distributors":
 		if e.complexity.Product.Distributors == nil {
 			break
 		}
 
 		return e.complexity.Product.Distributors(childComplexity), true
 
-	case "Product.DRUG_TYPE":
+	case "Product.drugType":
 		if e.complexity.Product.DrugType == nil {
 			break
 		}
 
 		return e.complexity.Product.DrugType(childComplexity), true
 
-	case "Product.FreeQuantity":
+	case "Product.freeQuantity":
 		if e.complexity.Product.FreeQuantity == nil {
 			break
 		}
 
 		return e.complexity.Product.FreeQuantity(childComplexity), true
 
-	case "Product.MRP":
+	case "Product.mrp":
 		if e.complexity.Product.Mrp == nil {
 			break
 		}
 
 		return e.complexity.Product.Mrp(childComplexity), true
 
-	case "Product.PACK":
+	case "Product.pack":
 		if e.complexity.Product.Pack == nil {
 			break
 		}
 
 		return e.complexity.Product.Pack(childComplexity), true
 
-	case "Product.ProductCode":
+	case "Product.productCode":
 		if e.complexity.Product.ProductCode == nil {
 			break
 		}
 
 		return e.complexity.Product.ProductCode(childComplexity), true
 
-	case "Product.ProductName":
+	case "Product.productName":
 		if e.complexity.Product.ProductName == nil {
 			break
 		}
 
 		return e.complexity.Product.ProductName(childComplexity), true
 
-	case "Product.PTR":
+	case "Product.ptr":
 		if e.complexity.Product.Ptr == nil {
 			break
 		}
 
 		return e.complexity.Product.Ptr(childComplexity), true
 
-	case "Product.PTS":
+	case "Product.pts":
 		if e.complexity.Product.Pts == nil {
 			break
 		}
 
 		return e.complexity.Product.Pts(childComplexity), true
 
-	case "Product.Quantity":
+	case "Product.quantity":
 		if e.complexity.Product.Quantity == nil {
 			break
 		}
 
 		return e.complexity.Product.Quantity(childComplexity), true
 
-	case "Product.SchemePercentage":
+	case "Product.schemePercentage":
 		if e.complexity.Product.SchemePercentage == nil {
 			break
 		}
 
 		return e.complexity.Product.SchemePercentage(childComplexity), true
 
-	case "Product.STRENGTH":
+	case "Product.strength":
 		if e.complexity.Product.Strength == nil {
 			break
 		}
@@ -414,7 +493,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.ProductByItemCode(childComplexity, args["ItemCode"].(string)), true
+		return e.complexity.Query.ProductByItemCode(childComplexity, args["itemCode"].(string)), true
 
 	case "Query.products":
 		if e.complexity.Query.Products == nil {
@@ -426,7 +505,19 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.Products(childComplexity, args["ProductName"].(string), args["Type"].(string)), true
+		return e.complexity.Query.Products(childComplexity, args["productName"].(string)), true
+
+	case "Query.productsAwacs":
+		if e.complexity.Query.ProductsAwacs == nil {
+			break
+		}
+
+		args, err := ec.field_Query_productsAwacs_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.ProductsAwacs(childComplexity, args["productName"].(string)), true
 
 	case "Query.userById":
 		if e.complexity.Query.UserByID == nil {
@@ -438,7 +529,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.UserByID(childComplexity, args["ID"].(string)), true
+		return e.complexity.Query.UserByID(childComplexity, args["id"].(string)), true
 
 	case "Query.userByMobile":
 		if e.complexity.Query.UserByMobile == nil {
@@ -512,6 +603,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.User.ChangePasswordOnLogon(childComplexity), true
+
+	case "User.city":
+		if e.complexity.User.City == nil {
+			break
+		}
+
+		return e.complexity.User.City(childComplexity), true
 
 	case "User.cityId":
 		if e.complexity.User.CityID == nil {
@@ -751,6 +849,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.User.SourceType(childComplexity), true
 
+	case "User.state":
+		if e.complexity.User.State == nil {
+			break
+		}
+
+		return e.complexity.User.State(childComplexity), true
+
 	case "User.stateId":
 		if e.complexity.User.StateID == nil {
 			break
@@ -862,21 +967,33 @@ var sources = []*ast.Source{
 # https://gqlgen.com/getting-started/
 
 type Product {
-  ProductCode: ID!
-  ProductName: String!
-  BRAND: String!
-  Company:String!
-  Quantity:Float!
-  FreeQuantity:Float
-  SchemePercentage:Float
-  Closing:Float
-  DRUG_TYPE: String
-  STRENGTH:String
-  PACK:String!
-  MRP:Float!
-  PTR:Float
-  PTS:Float
-  Distributors:[User!]!
+  productCode: ID!
+  productName: String!
+  company:String!
+  quantity:Float!
+  freeQuantity:Float
+  schemePercentage:Float
+  closing:Float
+  drugType: String
+  strength:String
+  pack:String!
+  mrp:Float!
+  ptr:Float
+  pts:Float
+  distributors:[User!]
+}
+
+type AWACSProduct {
+  productCode: ID!
+  productName: String!
+  brand: String!
+  company:String!
+  drugType: String
+  strength:String
+  pack:String!
+  mrp:Float!
+  ptr:Float
+  pts:Float
 }
 
 type User {
@@ -891,6 +1008,8 @@ address1: String!
 address2: String
 address3: String
 cityId: Int!
+city: String!
+state: String!
 stateId: Int!
 country: String!
 phoneNo: String!
@@ -933,7 +1052,7 @@ userId: String!
 
 type Order {
   	id:ID!
-	Source:String
+	source:String
 	buyerId:String
 	orderNumber:String!
 	orderDate:String
@@ -951,16 +1070,17 @@ type Order {
 
 
 type Query {
-  products(ProductName: String!, Type:String!): [Product!]!
-  productByItemCode(ItemCode: ID!): [Product!]!
-  userById(ID:ID!):User!
+  products(productName: String!): [Product!]!
+  productsAwacs(productName: String!): [AWACSProduct!]!
+  productByItemCode(itemCode: ID!): [AWACSProduct!]!
+  userById(id:ID!):User!
   userByUserName(username: String!):User!
   userByMobile(mobile: String!):User!
   orderByUserId(buyerId: String!):[Order!]!
 }
 
 input NewProduct {
-  ProductName: String!
+  productName: String!
 }
 
 type Mutation {
@@ -1023,14 +1143,29 @@ func (ec *executionContext) field_Query_productByItemCode_args(ctx context.Conte
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
-	if tmp, ok := rawArgs["ItemCode"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ItemCode"))
+	if tmp, ok := rawArgs["itemCode"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("itemCode"))
 		arg0, err = ec.unmarshalNID2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["ItemCode"] = arg0
+	args["itemCode"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_productsAwacs_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["productName"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("productName"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["productName"] = arg0
 	return args, nil
 }
 
@@ -1038,23 +1173,14 @@ func (ec *executionContext) field_Query_products_args(ctx context.Context, rawAr
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
-	if tmp, ok := rawArgs["ProductName"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ProductName"))
+	if tmp, ok := rawArgs["productName"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("productName"))
 		arg0, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["ProductName"] = arg0
-	var arg1 string
-	if tmp, ok := rawArgs["Type"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("Type"))
-		arg1, err = ec.unmarshalNString2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["Type"] = arg1
+	args["productName"] = arg0
 	return args, nil
 }
 
@@ -1062,14 +1188,14 @@ func (ec *executionContext) field_Query_userById_args(ctx context.Context, rawAr
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
-	if tmp, ok := rawArgs["ID"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ID"))
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
 		arg0, err = ec.unmarshalNID2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["ID"] = arg0
+	args["id"] = arg0
 	return args, nil
 }
 
@@ -1140,6 +1266,344 @@ func (ec *executionContext) field___Type_fields_args(ctx context.Context, rawArg
 // endregion ************************** directives.gotpl **************************
 
 // region    **************************** field.gotpl *****************************
+
+func (ec *executionContext) _AWACSProduct_productCode(ctx context.Context, field graphql.CollectedField, obj *model.AWACSProduct) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "AWACSProduct",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ProductCode, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _AWACSProduct_productName(ctx context.Context, field graphql.CollectedField, obj *model.AWACSProduct) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "AWACSProduct",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ProductName, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _AWACSProduct_brand(ctx context.Context, field graphql.CollectedField, obj *model.AWACSProduct) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "AWACSProduct",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Brand, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _AWACSProduct_company(ctx context.Context, field graphql.CollectedField, obj *model.AWACSProduct) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "AWACSProduct",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Company, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _AWACSProduct_drugType(ctx context.Context, field graphql.CollectedField, obj *model.AWACSProduct) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "AWACSProduct",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DrugType, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _AWACSProduct_strength(ctx context.Context, field graphql.CollectedField, obj *model.AWACSProduct) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "AWACSProduct",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Strength, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _AWACSProduct_pack(ctx context.Context, field graphql.CollectedField, obj *model.AWACSProduct) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "AWACSProduct",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Pack, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _AWACSProduct_mrp(ctx context.Context, field graphql.CollectedField, obj *model.AWACSProduct) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "AWACSProduct",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Mrp, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalNFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _AWACSProduct_ptr(ctx context.Context, field graphql.CollectedField, obj *model.AWACSProduct) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "AWACSProduct",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Ptr, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*float64)
+	fc.Result = res
+	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _AWACSProduct_pts(ctx context.Context, field graphql.CollectedField, obj *model.AWACSProduct) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "AWACSProduct",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Pts, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*float64)
+	fc.Result = res
+	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
+}
 
 func (ec *executionContext) _Mutation_createProduct(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
@@ -1218,7 +1682,7 @@ func (ec *executionContext) _Order_id(ctx context.Context, field graphql.Collect
 	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Order_Source(ctx context.Context, field graphql.CollectedField, obj *model.Order) (ret graphql.Marshaler) {
+func (ec *executionContext) _Order_source(ctx context.Context, field graphql.CollectedField, obj *model.Order) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -1675,7 +2139,7 @@ func (ec *executionContext) _Order_products(ctx context.Context, field graphql.C
 	return ec.marshalNProduct2ᚕᚖawacs_smart_api_serviceᚋgraphᚋmodelᚐProductᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Product_ProductCode(ctx context.Context, field graphql.CollectedField, obj *model.Product) (ret graphql.Marshaler) {
+func (ec *executionContext) _Product_productCode(ctx context.Context, field graphql.CollectedField, obj *model.Product) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -1710,7 +2174,7 @@ func (ec *executionContext) _Product_ProductCode(ctx context.Context, field grap
 	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Product_ProductName(ctx context.Context, field graphql.CollectedField, obj *model.Product) (ret graphql.Marshaler) {
+func (ec *executionContext) _Product_productName(ctx context.Context, field graphql.CollectedField, obj *model.Product) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -1745,42 +2209,7 @@ func (ec *executionContext) _Product_ProductName(ctx context.Context, field grap
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Product_BRAND(ctx context.Context, field graphql.CollectedField, obj *model.Product) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Product",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Brand, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Product_Company(ctx context.Context, field graphql.CollectedField, obj *model.Product) (ret graphql.Marshaler) {
+func (ec *executionContext) _Product_company(ctx context.Context, field graphql.CollectedField, obj *model.Product) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -1815,7 +2244,7 @@ func (ec *executionContext) _Product_Company(ctx context.Context, field graphql.
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Product_Quantity(ctx context.Context, field graphql.CollectedField, obj *model.Product) (ret graphql.Marshaler) {
+func (ec *executionContext) _Product_quantity(ctx context.Context, field graphql.CollectedField, obj *model.Product) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -1850,7 +2279,7 @@ func (ec *executionContext) _Product_Quantity(ctx context.Context, field graphql
 	return ec.marshalNFloat2float64(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Product_FreeQuantity(ctx context.Context, field graphql.CollectedField, obj *model.Product) (ret graphql.Marshaler) {
+func (ec *executionContext) _Product_freeQuantity(ctx context.Context, field graphql.CollectedField, obj *model.Product) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -1882,7 +2311,7 @@ func (ec *executionContext) _Product_FreeQuantity(ctx context.Context, field gra
 	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Product_SchemePercentage(ctx context.Context, field graphql.CollectedField, obj *model.Product) (ret graphql.Marshaler) {
+func (ec *executionContext) _Product_schemePercentage(ctx context.Context, field graphql.CollectedField, obj *model.Product) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -1914,7 +2343,7 @@ func (ec *executionContext) _Product_SchemePercentage(ctx context.Context, field
 	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Product_Closing(ctx context.Context, field graphql.CollectedField, obj *model.Product) (ret graphql.Marshaler) {
+func (ec *executionContext) _Product_closing(ctx context.Context, field graphql.CollectedField, obj *model.Product) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -1946,7 +2375,7 @@ func (ec *executionContext) _Product_Closing(ctx context.Context, field graphql.
 	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Product_DRUG_TYPE(ctx context.Context, field graphql.CollectedField, obj *model.Product) (ret graphql.Marshaler) {
+func (ec *executionContext) _Product_drugType(ctx context.Context, field graphql.CollectedField, obj *model.Product) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -1978,7 +2407,7 @@ func (ec *executionContext) _Product_DRUG_TYPE(ctx context.Context, field graphq
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Product_STRENGTH(ctx context.Context, field graphql.CollectedField, obj *model.Product) (ret graphql.Marshaler) {
+func (ec *executionContext) _Product_strength(ctx context.Context, field graphql.CollectedField, obj *model.Product) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -2010,7 +2439,7 @@ func (ec *executionContext) _Product_STRENGTH(ctx context.Context, field graphql
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Product_PACK(ctx context.Context, field graphql.CollectedField, obj *model.Product) (ret graphql.Marshaler) {
+func (ec *executionContext) _Product_pack(ctx context.Context, field graphql.CollectedField, obj *model.Product) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -2045,7 +2474,7 @@ func (ec *executionContext) _Product_PACK(ctx context.Context, field graphql.Col
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Product_MRP(ctx context.Context, field graphql.CollectedField, obj *model.Product) (ret graphql.Marshaler) {
+func (ec *executionContext) _Product_mrp(ctx context.Context, field graphql.CollectedField, obj *model.Product) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -2080,7 +2509,7 @@ func (ec *executionContext) _Product_MRP(ctx context.Context, field graphql.Coll
 	return ec.marshalNFloat2float64(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Product_PTR(ctx context.Context, field graphql.CollectedField, obj *model.Product) (ret graphql.Marshaler) {
+func (ec *executionContext) _Product_ptr(ctx context.Context, field graphql.CollectedField, obj *model.Product) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -2112,7 +2541,7 @@ func (ec *executionContext) _Product_PTR(ctx context.Context, field graphql.Coll
 	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Product_PTS(ctx context.Context, field graphql.CollectedField, obj *model.Product) (ret graphql.Marshaler) {
+func (ec *executionContext) _Product_pts(ctx context.Context, field graphql.CollectedField, obj *model.Product) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -2144,7 +2573,7 @@ func (ec *executionContext) _Product_PTS(ctx context.Context, field graphql.Coll
 	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Product_Distributors(ctx context.Context, field graphql.CollectedField, obj *model.Product) (ret graphql.Marshaler) {
+func (ec *executionContext) _Product_distributors(ctx context.Context, field graphql.CollectedField, obj *model.Product) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -2169,14 +2598,11 @@ func (ec *executionContext) _Product_Distributors(ctx context.Context, field gra
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.([]*model.User)
 	fc.Result = res
-	return ec.marshalNUser2ᚕᚖawacs_smart_api_serviceᚋgraphᚋmodelᚐUserᚄ(ctx, field.Selections, res)
+	return ec.marshalOUser2ᚕᚖawacs_smart_api_serviceᚋgraphᚋmodelᚐUserᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_products(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -2204,7 +2630,7 @@ func (ec *executionContext) _Query_products(ctx context.Context, field graphql.C
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Products(rctx, args["ProductName"].(string), args["Type"].(string))
+		return ec.resolvers.Query().Products(rctx, args["productName"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2219,6 +2645,48 @@ func (ec *executionContext) _Query_products(ctx context.Context, field graphql.C
 	res := resTmp.([]*model.Product)
 	fc.Result = res
 	return ec.marshalNProduct2ᚕᚖawacs_smart_api_serviceᚋgraphᚋmodelᚐProductᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_productsAwacs(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_productsAwacs_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().ProductsAwacs(rctx, args["productName"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.AWACSProduct)
+	fc.Result = res
+	return ec.marshalNAWACSProduct2ᚕᚖawacs_smart_api_serviceᚋgraphᚋmodelᚐAWACSProductᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_productByItemCode(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -2246,7 +2714,7 @@ func (ec *executionContext) _Query_productByItemCode(ctx context.Context, field 
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().ProductByItemCode(rctx, args["ItemCode"].(string))
+		return ec.resolvers.Query().ProductByItemCode(rctx, args["itemCode"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2258,9 +2726,9 @@ func (ec *executionContext) _Query_productByItemCode(ctx context.Context, field 
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*model.Product)
+	res := resTmp.([]*model.AWACSProduct)
 	fc.Result = res
-	return ec.marshalNProduct2ᚕᚖawacs_smart_api_serviceᚋgraphᚋmodelᚐProductᚄ(ctx, field.Selections, res)
+	return ec.marshalNAWACSProduct2ᚕᚖawacs_smart_api_serviceᚋgraphᚋmodelᚐAWACSProductᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_userById(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -2288,7 +2756,7 @@ func (ec *executionContext) _Query_userById(ctx context.Context, field graphql.C
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().UserByID(rctx, args["ID"].(string))
+		return ec.resolvers.Query().UserByID(rctx, args["id"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2873,6 +3341,76 @@ func (ec *executionContext) _User_cityId(ctx context.Context, field graphql.Coll
 	res := resTmp.(int)
 	fc.Result = res
 	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _User_city(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.City, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _User_state(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.State, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _User_stateId(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
@@ -5141,10 +5679,10 @@ func (ec *executionContext) unmarshalInputNewProduct(ctx context.Context, obj in
 
 	for k, v := range asMap {
 		switch k {
-		case "ProductName":
+		case "productName":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ProductName"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("productName"))
 			it.ProductName, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
@@ -5162,6 +5700,66 @@ func (ec *executionContext) unmarshalInputNewProduct(ctx context.Context, obj in
 // endregion ************************** interface.gotpl ***************************
 
 // region    **************************** object.gotpl ****************************
+
+var aWACSProductImplementors = []string{"AWACSProduct"}
+
+func (ec *executionContext) _AWACSProduct(ctx context.Context, sel ast.SelectionSet, obj *model.AWACSProduct) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, aWACSProductImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("AWACSProduct")
+		case "productCode":
+			out.Values[i] = ec._AWACSProduct_productCode(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "productName":
+			out.Values[i] = ec._AWACSProduct_productName(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "brand":
+			out.Values[i] = ec._AWACSProduct_brand(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "company":
+			out.Values[i] = ec._AWACSProduct_company(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "drugType":
+			out.Values[i] = ec._AWACSProduct_drugType(ctx, field, obj)
+		case "strength":
+			out.Values[i] = ec._AWACSProduct_strength(ctx, field, obj)
+		case "pack":
+			out.Values[i] = ec._AWACSProduct_pack(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "mrp":
+			out.Values[i] = ec._AWACSProduct_mrp(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "ptr":
+			out.Values[i] = ec._AWACSProduct_ptr(ctx, field, obj)
+		case "pts":
+			out.Values[i] = ec._AWACSProduct_pts(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
 
 var mutationImplementors = []string{"Mutation"}
 
@@ -5210,8 +5808,8 @@ func (ec *executionContext) _Order(ctx context.Context, sel ast.SelectionSet, ob
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "Source":
-			out.Values[i] = ec._Order_Source(ctx, field, obj)
+		case "source":
+			out.Values[i] = ec._Order_source(ctx, field, obj)
 		case "buyerId":
 			out.Values[i] = ec._Order_buyerId(ctx, field, obj)
 		case "orderNumber":
@@ -5269,60 +5867,52 @@ func (ec *executionContext) _Product(ctx context.Context, sel ast.SelectionSet, 
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Product")
-		case "ProductCode":
-			out.Values[i] = ec._Product_ProductCode(ctx, field, obj)
+		case "productCode":
+			out.Values[i] = ec._Product_productCode(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "ProductName":
-			out.Values[i] = ec._Product_ProductName(ctx, field, obj)
+		case "productName":
+			out.Values[i] = ec._Product_productName(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "BRAND":
-			out.Values[i] = ec._Product_BRAND(ctx, field, obj)
+		case "company":
+			out.Values[i] = ec._Product_company(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "Company":
-			out.Values[i] = ec._Product_Company(ctx, field, obj)
+		case "quantity":
+			out.Values[i] = ec._Product_quantity(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "Quantity":
-			out.Values[i] = ec._Product_Quantity(ctx, field, obj)
+		case "freeQuantity":
+			out.Values[i] = ec._Product_freeQuantity(ctx, field, obj)
+		case "schemePercentage":
+			out.Values[i] = ec._Product_schemePercentage(ctx, field, obj)
+		case "closing":
+			out.Values[i] = ec._Product_closing(ctx, field, obj)
+		case "drugType":
+			out.Values[i] = ec._Product_drugType(ctx, field, obj)
+		case "strength":
+			out.Values[i] = ec._Product_strength(ctx, field, obj)
+		case "pack":
+			out.Values[i] = ec._Product_pack(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "FreeQuantity":
-			out.Values[i] = ec._Product_FreeQuantity(ctx, field, obj)
-		case "SchemePercentage":
-			out.Values[i] = ec._Product_SchemePercentage(ctx, field, obj)
-		case "Closing":
-			out.Values[i] = ec._Product_Closing(ctx, field, obj)
-		case "DRUG_TYPE":
-			out.Values[i] = ec._Product_DRUG_TYPE(ctx, field, obj)
-		case "STRENGTH":
-			out.Values[i] = ec._Product_STRENGTH(ctx, field, obj)
-		case "PACK":
-			out.Values[i] = ec._Product_PACK(ctx, field, obj)
+		case "mrp":
+			out.Values[i] = ec._Product_mrp(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "MRP":
-			out.Values[i] = ec._Product_MRP(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "PTR":
-			out.Values[i] = ec._Product_PTR(ctx, field, obj)
-		case "PTS":
-			out.Values[i] = ec._Product_PTS(ctx, field, obj)
-		case "Distributors":
-			out.Values[i] = ec._Product_Distributors(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
+		case "ptr":
+			out.Values[i] = ec._Product_ptr(ctx, field, obj)
+		case "pts":
+			out.Values[i] = ec._Product_pts(ctx, field, obj)
+		case "distributors":
+			out.Values[i] = ec._Product_distributors(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -5358,6 +5948,20 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_products(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "productsAwacs":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_productsAwacs(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
@@ -5499,6 +6103,16 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			out.Values[i] = ec._User_address3(ctx, field, obj)
 		case "cityId":
 			out.Values[i] = ec._User_cityId(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "city":
+			out.Values[i] = ec._User_city(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "state":
+			out.Values[i] = ec._User_state(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -5851,6 +6465,53 @@ func (ec *executionContext) ___Type(ctx context.Context, sel ast.SelectionSet, o
 
 // region    ***************************** type.gotpl *****************************
 
+func (ec *executionContext) marshalNAWACSProduct2ᚕᚖawacs_smart_api_serviceᚋgraphᚋmodelᚐAWACSProductᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.AWACSProduct) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNAWACSProduct2ᚖawacs_smart_api_serviceᚋgraphᚋmodelᚐAWACSProduct(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalNAWACSProduct2ᚖawacs_smart_api_serviceᚋgraphᚋmodelᚐAWACSProduct(ctx context.Context, sel ast.SelectionSet, v *model.AWACSProduct) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._AWACSProduct(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalNBoolean2bool(ctx context.Context, v interface{}) (bool, error) {
 	res, err := graphql.UnmarshalBoolean(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -6031,43 +6692,6 @@ func (ec *executionContext) marshalNString2string(ctx context.Context, sel ast.S
 
 func (ec *executionContext) marshalNUser2awacs_smart_api_serviceᚋgraphᚋmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v model.User) graphql.Marshaler {
 	return ec._User(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalNUser2ᚕᚖawacs_smart_api_serviceᚋgraphᚋmodelᚐUserᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.User) graphql.Marshaler {
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalNUser2ᚖawacs_smart_api_serviceᚋgraphᚋmodelᚐUser(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-	return ret
 }
 
 func (ec *executionContext) marshalNUser2ᚖawacs_smart_api_serviceᚋgraphᚋmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v *model.User) graphql.Marshaler {
@@ -6385,6 +7009,46 @@ func (ec *executionContext) marshalOString2ᚖstring(ctx context.Context, sel as
 		return graphql.Null
 	}
 	return graphql.MarshalString(*v)
+}
+
+func (ec *executionContext) marshalOUser2ᚕᚖawacs_smart_api_serviceᚋgraphᚋmodelᚐUserᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.User) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNUser2ᚖawacs_smart_api_serviceᚋgraphᚋmodelᚐUser(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
 }
 
 func (ec *executionContext) marshalO__EnumValue2ᚕgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐEnumValueᚄ(ctx context.Context, sel ast.SelectionSet, v []introspection.EnumValue) graphql.Marshaler {

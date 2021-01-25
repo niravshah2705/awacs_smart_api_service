@@ -3,21 +3,33 @@
 # https://gqlgen.com/getting-started/
 
 type Product {
-  ProductCode: ID!
-  ProductName: String!
-  BRAND: String!
-  Company:String!
-  Quantity:Float!
-  FreeQuantity:Float
-  SchemePercentage:Float
-  Closing:Float
-  DRUG_TYPE: String
-  STRENGTH:String
-  PACK:String!
-  MRP:Float!
-  PTR:Float
-  PTS:Float
-  Distributors:[User!]!
+  productCode: ID!
+  productName: String!
+  company:String!
+  quantity:Float!
+  freeQuantity:Float
+  schemePercentage:Float
+  closing:Float
+  drugType: String
+  strength:String
+  pack:String!
+  mrp:Float!
+  ptr:Float
+  pts:Float
+  distributors:[User!]
+}
+
+type AWACSProduct {
+  productCode: ID!
+  productName: String!
+  brand: String!
+  company:String!
+  drugType: String
+  strength:String
+  pack:String!
+  mrp:Float!
+  ptr:Float
+  pts:Float
 }
 
 type User {
@@ -32,6 +44,8 @@ address1: String!
 address2: String
 address3: String
 cityId: Int!
+city: String!
+state: String!
 stateId: Int!
 country: String!
 phoneNo: String!
@@ -74,7 +88,7 @@ userId: String!
 
 type Order {
   	id:ID!
-	Source:String
+	source:String
 	buyerId:String
 	orderNumber:String!
 	orderDate:String
@@ -92,16 +106,17 @@ type Order {
 
 
 type Query {
-  products(ProductName: String!, Type:String!): [Product!]!
-  productByItemCode(ItemCode: ID!): [Product!]!
-  userById(ID:ID!):User!
+  products(productName: String!): [Product!]!
+  productsAwacs(productName: String!): [AWACSProduct!]!
+  productByItemCode(itemCode: ID!): [AWACSProduct!]!
+  userById(id:ID!):User!
   userByUserName(username: String!):User!
   userByMobile(mobile: String!):User!
   orderByUserId(buyerId: String!):[Order!]!
 }
 
 input NewProduct {
-  ProductName: String!
+  productName: String!
 }
 
 type Mutation {

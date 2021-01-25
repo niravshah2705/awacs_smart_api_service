@@ -1,14 +1,12 @@
 package main
 
 import (
+	"awacs_smart_api_service/app"
 	"log"
 
-	"awacs_smart_api_service/app"
-	db "github.com/brkelkar/common_utils/databases"
-
 	cr "github.com/brkelkar/common_utils/configreader"
+	db "github.com/brkelkar/common_utils/databases"
 	"github.com/brkelkar/common_utils/logger"
-
 	"gorm.io/gorm"
 )
 
@@ -17,12 +15,13 @@ var (
 		"DB_PORT", "DB_HOST", "DB_USERNAME", "DB_PASSWORD", "GRPC_SERVER", "GRPC_CLIENT"}
 	err error
 )
+
 func main() {
-	logger.Info("Starting Sync upload service")
+	logger.Info("Starting Awacs search Api service")
 
 	var cfg cr.Config
 	//Read configuration from config.yml file
-	cfg.ReadFile("config.yml")
+	cfg.ReadGcsFile("gs://awacs_config/config.yml")
 
 	//Read enviroment variables
 	m := cfg.ReadEnv(envVerables)

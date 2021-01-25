@@ -1,7 +1,8 @@
 package model
+
 type Order struct {
 	ID             string     `json:"id"`
-	Source         *string    `json:"Source"`
+	Source         *string    `json:"source"`
 	BuyerID        *string    `json:"buyerId"`
 	OrderNumber    string     `json:"orderNumber"`
 	OrderDate      *string    `json:"orderDate"`
@@ -17,22 +18,21 @@ type Order struct {
 	Products       []*Product `json:"products"`
 }
 
-
-type OrderDetails struct{
-	ID             string          `json:"id"`
-	Source         *string         `json:"Source"`
-	BuyerID        *string         `json:"buyerId"`
-	OrderNumber    string          `json:"orderNumber"`
-	OrderDate      *string         `json:"orderDate"`
-	SupplierID     string          `json:"supplierId"`
-	TakenOn        *string         `json:"takenOn"`
-	DeliveryOption *string         `json:"deliveryOption"`
-	DeliveryMode   *string         `json:"deliveryMode"`
-	Remarks        *string         `json:"remarks"`
-	WorkspaceID    *int            `json:"workspaceId"`
-	Status         *string         `json:"status"`
-	InvoiceNumber  *string         `json:"invoiceNumber"`
-	IsBounced      *bool           `json:"isBounced"`
+type OrderDetails struct {
+	ID               string   `json:"id"`
+	Source           *string  `json:"Source"`
+	BuyerID          *string  `json:"buyerId"`
+	OrderNumber      string   `json:"orderNumber"`
+	OrderDate        *string  `json:"orderDate"`
+	SupplierID       string   `json:"supplierId"`
+	TakenOn          *string  `json:"takenOn"`
+	DeliveryOption   *string  `json:"deliveryOption"`
+	DeliveryMode     *string  `json:"deliveryMode"`
+	Remarks          *string  `json:"remarks"`
+	WorkspaceID      *int     `json:"workspaceId"`
+	Status           *string  `json:"status"`
+	InvoiceNumber    *string  `json:"invoiceNumber"`
+	IsBounced        *bool    `json:"isBounced"`
 	ProductCode      string   `json:"ProductCode"`
 	ProductName      string   `json:"ProductName"`
 	Company          string   `json:"Company"`
@@ -45,7 +45,6 @@ type OrderDetails struct{
 	Ptr              *float64 `json:"PTR"`
 	Pts              *float64 `json:"PTS"`
 }
-
 
 //TableName retunrs source table name
 func (OrderDetails) TableName() string {

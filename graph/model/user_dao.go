@@ -1,6 +1,7 @@
 package model
+
 type User struct {
-	ID                    string  `json:"id";gorm:column:Id`
+	ID                    string  `json:"id"`
 	ChangePasswordOnLogon *bool   `json:"changePasswordOnLogon"`
 	PictureID             *int    `json:"pictureId"`
 	WorkspaceID           int     `json:"workspaceId"`
@@ -11,6 +12,8 @@ type User struct {
 	Address2              *string `json:"address2"`
 	Address3              *string `json:"address3"`
 	CityID                int     `json:"cityId"`
+	City                  string  `json:"city"`
+	State                 string  `json:"state"`
 	StateID               int     `json:"stateId"`
 	Country               string  `json:"country"`
 	PhoneNo               string  `json:"phoneNo"`
@@ -48,7 +51,6 @@ type User struct {
 	IFSCCode              *string `json:"iFSCCode"`
 	UserID                string  `json:"userId"`
 }
-
 
 //TableName retunrs source table name
 func (User) TableName() string {
