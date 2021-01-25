@@ -6,7 +6,7 @@ import (
 
 	cr "github.com/brkelkar/common_utils/configreader"
 	db "github.com/brkelkar/common_utils/databases"
-	"github.com/brkelkar/common_utils/logger"
+	lg "github.com/brkelkar/common_utils/logger"
 	"gorm.io/gorm"
 )
 
@@ -17,7 +17,7 @@ var (
 )
 
 func main() {
-	logger.Info("Starting Awacs search Api service")
+	lg.Info("Starting Awacs search Api service")
 
 	var cfg cr.Config
 	//Read configuration from config.yml file
@@ -36,21 +36,21 @@ func main() {
 	db.DB = make(map[string]*gorm.DB, 3)
 	db.DB["smartdb"], err = dbObj.GetConnection("smartdb", cfg)
 	if err != nil {
-		logger.Error("Error while connecting to smartdb", err)
+		lg.Error("Error while connecting to smartdb", err)
 		log.Fatal(err)
 	}
 
 	dbObj.CreateConnectionPool(db.DB["smartdb"], 10, 100, 60)
-	logger.Info("Connection successful smartdb")
+	lg.Info("Connection successful smartdb")
 
 	db.DB["awacs"], err = dbObj.GetConnection("awacs", cfg)
 	if err != nil {
-		logger.Error("Error while connecting to awacs", err)
+		lg.Error("Error while connecting to awacs", err)
 		log.Fatal(err)
 	}
 
 	dbObj.CreateConnectionPool(db.DB["awacs"], 10, 100, 60)
-	logger.Info("Connection successful awacs")
+	lg.Info("Connection successful awacs")
 	app.Start_Application(cfg)
 
 }

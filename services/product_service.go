@@ -23,6 +23,7 @@ PTS Pts`
 func Products(Product *[]*model.Product, productName string) (err error) {
 	var P []*model.ProductDetails
 	err = db.DB["smartdb"].Limit(1000).Where("ProductName like '" + productName + "%'").Order("ProductName").Find(&P).Error
+
 	if err != nil {
 		fmt.Print(err)
 		return

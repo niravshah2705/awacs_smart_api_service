@@ -6,7 +6,7 @@ WORKDIR $GOPATH/src/github.com/brkelkar/awacs_smart_api_service
 # Copy everything from the current directory to the PWD (Present Working Directory) inside the container
 COPY . .
 
-
+ENV GIN_MODE=release
 # Install the package
 RUN go build -tags=jsoniter .
 # This container exposes port 8080 to the outside world
