@@ -40,7 +40,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	dbObj.CreateConnectionPool(db.DB["smartdb"], 10, 100, 60)
+	dbObj.CreateConnectionPool(db.DB["smartdb"], 10, 20, 60)
 	lg.Info("Connection successful smartdb")
 
 	db.DB["awacs"], err = dbObj.GetConnection("awacs", cfg)
@@ -49,7 +49,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	dbObj.CreateConnectionPool(db.DB["awacs"], 10, 100, 60)
+	dbObj.CreateConnectionPool(db.DB["awacs"], 10, 20, 60)
 	lg.Info("Connection successful awacs")
 	app.Start_Application(cfg)
 

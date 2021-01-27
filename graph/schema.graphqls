@@ -16,6 +16,40 @@ type Product {
   mrp:Float!
   ptr:Float
   pts:Float
+  batchId: String
+  hsn: String
+  TaxableAmount: Float
+  	remarks: String
+ 	batch: String
+	expiry: String
+	rate: Float
+	amount: Float
+	discount: Float
+	discountAmount: Float
+	addlScheme: Float
+	addlSchemeAmount: Float
+	addlDiscount: Float
+	addlDiscountAmount: Float
+	deductableBeforeDiscount: Float
+	mrpInclusiveTax: Boolean
+	vatApplication: String
+	vat: Float
+	addlTax: Float
+	cst: Float
+	sGST: Float
+	cGST: Float
+	iGST: Float
+	orderNumber: String
+	orderDate: String
+	barcode: String
+	orderSource: String  
+	baseSchemeQuantity: Float
+	baseSchemeFreeQuantity: Float
+	sgstAmount: Float
+	cgstAmount: Float
+	igstAmount: Float
+	cess: Float
+	cessAmount: Float
   distributors:[User!]
 }
 
@@ -105,6 +139,40 @@ type Order {
 }
 
 
+type Invoice {
+	id: ID!
+	developerId: String
+	supplierId: String!
+	billNumber: String!
+	billDate: String!
+	challanNumber: String
+	challanDate: String
+	buyerId: String!
+	reason: String
+	upc: String
+	paymentDueDate: String
+	netInvoiceAmount: Float
+	netPurchaseAmount: Float
+	lastTransactionDate: String
+	receivedOn: String
+	emailPrepared: Boolean
+	emailPreparedOn: String
+	taken: String
+	takenOn: String
+	lastHostAddress: String
+	workspaceId: Int
+	ede2_Taken: Boolean
+	ede2_TakenDate: String
+	ede2_TakenBatchID: String
+	taxableAmount: Float
+    products:[Product!]!
+	suppliers:[User!]!
+	buyers:[User!]!
+
+	
+}
+
+
 type Query {
   products(productName: String!): [Product!]!
   productsAwacs(productName: String!): [AWACSProduct!]!
@@ -113,6 +181,7 @@ type Query {
   userByUserName(username: String!):User!
   userByMobile(mobile: String!):User!
   orderByUserId(buyerId: String!):[Order!]!
+  invoiceByBillNumber(billNumber: String!): [Invoice!]!
 }
 
 input NewProduct {
