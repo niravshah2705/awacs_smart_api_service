@@ -1,44 +1,38 @@
 package model
 
 type Invoice struct {
-	ID                  string     `json:"id"`
-	DeveloperID         *string    `json:"developerId"`
-	SupplierID          string     `json:"supplierId"`
-	BillNumber          string     `json:"billNumber"`
-	BillDate            string     `json:"billDate"`
-	ChallanNumber       *string    `json:"challanNumber"`
-	ChallanDate         *string    `json:"challanDate"`
-	BuyerID             string     `json:"buyerId"`
-	Reason              *string    `json:"reason"`
-	Upc                 *string    `json:"upc"`
-	PaymentDueDate      *string    `json:"paymentDueDate"`
-	NetInvoiceAmount    *float64   `json:"netInvoiceAmount"`
-	NetPurchaseAmount   *float64   `json:"netPurchaseAmount"`
-	LastTransactionDate *string    `json:"lastTransactionDate"`
-	ReceivedOn          *string    `json:"receivedOn"`
-	EmailPrepared       *bool      `json:"emailPrepared"`
-	EmailPreparedOn     *string    `json:"emailPreparedOn"`
-	Taken               *string    `json:"taken"`
-	TakenOn             *string    `json:"takenOn"`
-	LastHostAddress     *string    `json:"lastHostAddress"`
-	WorkspaceID         *int       `json:"workspaceId"`
-	Ede2Taken           *bool      `json:"ede2_Taken"`
-	Ede2TakenDate       *string    `json:"ede2_TakenDate"`
-	Ede2TakenBatchID    *string    `json:"ede2_TakenBatchID"`
-	TaxableAmount       *float64   `json:"taxableAmount"`
-	Products            []*Product `json:"products"`
-	Suppliers           []*User    `json:"suppliers"`
-	Buyers              []*User    `json:"buyers"`
+	ID                       string     `json:"id"`
+	DeveloperID              *string    `json:"developerId"`
+	SupplierID               string     `json:"supplierId"`
+	BillNumber               string     `json:"billNumber"`
+	BillDate                 string     `json:"billDate"`
+	ChallanNumber            *string    `json:"challanNumber"`
+	ChallanDate              *string    `json:"challanDate"`
+	BuyerID                  string     `json:"buyerId"`
+	Reason                   *string    `json:"reason"`
+	Upc                      *string    `json:"upc"`
+	PaymentDueDate           *string    `json:"paymentDueDate"`
+	NetInvoiceAmount         *float64   `json:"netInvoiceAmount"`
+	NetPurchaseAmount        *float64   `json:"netPurchaseAmount"`
+	LastTransactionDate      *string    `json:"lastTransactionDate"`
+	ReceivedOn               *string    `json:"receivedOn"`
+	EmailPrepared            *bool      `json:"emailPrepared"`
+	EmailbillNumberTakenDate *string    `json:"emailbillNumberTakenDate"`
+	Ede2TakenBatchID         *string    `json:"ede2_TakenBatchID"`
+	TaxableAmount            *float64   `json:"taxableAmount"`
+	Products                 []*Product `json:"products"`
+	Suppliers                *User      `json:"suppliers"`
+	Buyers                   *User      `json:"buyers"`
 }
 type InvoiceDetails struct {
 	ID                       string   `json:"id"`
-	DeveloperID              *string  `gorm:"column:DeveloperId";json:"developerId"`
-	SupplierID               string   `gorm:"column:SupplierId";json:"supplierId"`
+	DeveloperID              *string  `json:"developerId"`
+	SupplierID               string   `json:"supplierId"`
 	BillNumber               string   `json:"billNumber"`
 	BillDate                 string   `json:"billDate"`
 	ChallanNumber            *string  `json:"challanNumber"`
 	ChallanDate              *string  `json:"challanDate"`
-	BuyerID                  string   `gorm:"column:BuyerId";json:"buyerId"`
+	BuyerID                  string   `json:"buyerId"`
 	Reason                   *string  `json:"reason"`
 	Upc                      *string  `json:"upc"`
 	SupplierProductCode      string   `json:"supplierProductCode"`
@@ -125,6 +119,11 @@ type InvoiceDetails struct {
 	BuyerState               string   `json:"state"`
 }
 
+type InvoiceBuyer struct {
+	Invoices []*Invoice `json:"invoices"`
+	Buyers   *User      `json:"buyers"`
+}
+
 //TableName retunrs source table name
 func (Invoice) TableName() string {
 	return "dbo.Invoices"
@@ -132,5 +131,10 @@ func (Invoice) TableName() string {
 
 //TableName retunrs source table name
 func (InvoiceDetails) TableName() string {
+	return "dbo.V_INVOICE_DETAILS"
+}
+
+//TableName retunrs source table name
+func (InvoiceBuyer) TableName() string {
 	return "dbo.V_INVOICE_DETAILS"
 }

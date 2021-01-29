@@ -95,15 +95,26 @@ func (r *queryResolver) OrderByUserID(ctx context.Context, buyerID string) ([]*m
 	return Order, nil
 }
 
-func (r *queryResolver) InvoiceByBillNumber(ctx context.Context, billNumber string) ([]*model.Invoice, error) {
+func (r *queryResolver) InvoiceDetails(ctx context.Context, buyerID string, supplierID string, fromDate string, toDate string) ([]*model.Invoice, error) {
 	var Invoice []*model.Invoice
-	err := services.InvoiceByBillNumber(&Invoice, billNumber)
+	err := services.InvoiceDetails(&Invoice, buyerID, supplierID, fromDate, toDate)
 	if err != nil {
 		log.Print(err)
 		return nil, err
 
 	}
 	return Invoice, nil
+}
+
+func (r *queryResolver) InvoiceByBuyer(ctx context.Context, buyerID string, fromDate string, toDate string) (*model.InvoiceBuyer, error) {
+	var Invoice model.InvoiceBuyer
+	err := services.InvoiceByBuyer(&Invoice, buyerID, fromDate, toDate)
+	if err != nil {
+		log.Print(err)
+		return nil, err
+
+	}
+	return &Invoice, nil
 }
 
 // Mutation returns generated.MutationResolver implementation.
@@ -121,10 +132,10 @@ type queryResolver struct{ *Resolver }
 //  - When renaming or deleting a resolver the old code will be put in here. You can safely delete
 //    it when you're done.
 //  - You have helper methods in this file. Move them out to keep these resolver files clean.
-func (r *invoiceResolver) Suppliers(ctx context.Context, obj *model.Invoice) ([]*model.User, error) {
+func (r *invoiceResolver) Suppliers(ctx context.Context, obj *model.Invoice) (*model.User, error) {
 	panic(fmt.Errorf("not implemented"))
 }
-func (r *invoiceResolver) Buyers(ctx context.Context, obj *model.Invoice) ([]*model.User, error) {
+func (r *invoiceResolver) Buyers(ctx context.Context, obj *model.Invoice) (*model.User, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 

@@ -57,34 +57,33 @@ type ComplexityRoot struct {
 	}
 
 	Invoice struct {
-		BillDate            func(childComplexity int) int
-		BillNumber          func(childComplexity int) int
-		BuyerID             func(childComplexity int) int
-		Buyers              func(childComplexity int) int
-		ChallanDate         func(childComplexity int) int
-		ChallanNumber       func(childComplexity int) int
-		DeveloperID         func(childComplexity int) int
-		Ede2Taken           func(childComplexity int) int
-		Ede2TakenBatchID    func(childComplexity int) int
-		Ede2TakenDate       func(childComplexity int) int
-		EmailPrepared       func(childComplexity int) int
-		EmailPreparedOn     func(childComplexity int) int
-		ID                  func(childComplexity int) int
-		LastHostAddress     func(childComplexity int) int
-		LastTransactionDate func(childComplexity int) int
-		NetInvoiceAmount    func(childComplexity int) int
-		NetPurchaseAmount   func(childComplexity int) int
-		PaymentDueDate      func(childComplexity int) int
-		Products            func(childComplexity int) int
-		Reason              func(childComplexity int) int
-		ReceivedOn          func(childComplexity int) int
-		SupplierID          func(childComplexity int) int
-		Suppliers           func(childComplexity int) int
-		Taken               func(childComplexity int) int
-		TakenOn             func(childComplexity int) int
-		TaxableAmount       func(childComplexity int) int
-		Upc                 func(childComplexity int) int
-		WorkspaceID         func(childComplexity int) int
+		BillDate                 func(childComplexity int) int
+		BillNumber               func(childComplexity int) int
+		BuyerID                  func(childComplexity int) int
+		Buyers                   func(childComplexity int) int
+		ChallanDate              func(childComplexity int) int
+		ChallanNumber            func(childComplexity int) int
+		DeveloperID              func(childComplexity int) int
+		Ede2TakenBatchID         func(childComplexity int) int
+		EmailPrepared            func(childComplexity int) int
+		EmailbillNumberTakenDate func(childComplexity int) int
+		ID                       func(childComplexity int) int
+		LastTransactionDate      func(childComplexity int) int
+		NetInvoiceAmount         func(childComplexity int) int
+		NetPurchaseAmount        func(childComplexity int) int
+		PaymentDueDate           func(childComplexity int) int
+		Products                 func(childComplexity int) int
+		Reason                   func(childComplexity int) int
+		ReceivedOn               func(childComplexity int) int
+		SupplierID               func(childComplexity int) int
+		Suppliers                func(childComplexity int) int
+		TaxableAmount            func(childComplexity int) int
+		Upc                      func(childComplexity int) int
+	}
+
+	InvoiceBuyer struct {
+		Buyers   func(childComplexity int) int
+		Invoices func(childComplexity int) int
 	}
 
 	Mutation struct {
@@ -161,14 +160,15 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		InvoiceByBillNumber func(childComplexity int, billNumber string) int
-		OrderByUserID       func(childComplexity int, buyerID string) int
-		ProductByItemCode   func(childComplexity int, itemCode string) int
-		Products            func(childComplexity int, productName string) int
-		ProductsAwacs       func(childComplexity int, productName string) int
-		UserByID            func(childComplexity int, id string) int
-		UserByMobile        func(childComplexity int, mobile string) int
-		UserByUserName      func(childComplexity int, username string) int
+		InvoiceByBuyer    func(childComplexity int, buyerID string, fromDate string, toDate string) int
+		InvoiceDetails    func(childComplexity int, buyerID string, supplierID string, fromDate string, toDate string) int
+		OrderByUserID     func(childComplexity int, buyerID string) int
+		ProductByItemCode func(childComplexity int, itemCode string) int
+		Products          func(childComplexity int, productName string) int
+		ProductsAwacs     func(childComplexity int, productName string) int
+		UserByID          func(childComplexity int, id string) int
+		UserByMobile      func(childComplexity int, mobile string) int
+		UserByUserName    func(childComplexity int, username string) int
 	}
 
 	User struct {
@@ -235,7 +235,8 @@ type QueryResolver interface {
 	UserByUserName(ctx context.Context, username string) (*model.User, error)
 	UserByMobile(ctx context.Context, mobile string) (*model.User, error)
 	OrderByUserID(ctx context.Context, buyerID string) ([]*model.Order, error)
-	InvoiceByBillNumber(ctx context.Context, billNumber string) ([]*model.Invoice, error)
+	InvoiceDetails(ctx context.Context, buyerID string, supplierID string, fromDate string, toDate string) ([]*model.Invoice, error)
+	InvoiceByBuyer(ctx context.Context, buyerID string, fromDate string, toDate string) (*model.InvoiceBuyer, error)
 }
 
 type executableSchema struct {
@@ -372,26 +373,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Invoice.DeveloperID(childComplexity), true
 
-	case "Invoice.ede2_Taken":
-		if e.complexity.Invoice.Ede2Taken == nil {
-			break
-		}
-
-		return e.complexity.Invoice.Ede2Taken(childComplexity), true
-
 	case "Invoice.ede2_TakenBatchID":
 		if e.complexity.Invoice.Ede2TakenBatchID == nil {
 			break
 		}
 
 		return e.complexity.Invoice.Ede2TakenBatchID(childComplexity), true
-
-	case "Invoice.ede2_TakenDate":
-		if e.complexity.Invoice.Ede2TakenDate == nil {
-			break
-		}
-
-		return e.complexity.Invoice.Ede2TakenDate(childComplexity), true
 
 	case "Invoice.emailPrepared":
 		if e.complexity.Invoice.EmailPrepared == nil {
@@ -400,12 +387,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Invoice.EmailPrepared(childComplexity), true
 
-	case "Invoice.emailPreparedOn":
-		if e.complexity.Invoice.EmailPreparedOn == nil {
+	case "Invoice.emailbillNumberTakenDate":
+		if e.complexity.Invoice.EmailbillNumberTakenDate == nil {
 			break
 		}
 
-		return e.complexity.Invoice.EmailPreparedOn(childComplexity), true
+		return e.complexity.Invoice.EmailbillNumberTakenDate(childComplexity), true
 
 	case "Invoice.id":
 		if e.complexity.Invoice.ID == nil {
@@ -413,13 +400,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Invoice.ID(childComplexity), true
-
-	case "Invoice.lastHostAddress":
-		if e.complexity.Invoice.LastHostAddress == nil {
-			break
-		}
-
-		return e.complexity.Invoice.LastHostAddress(childComplexity), true
 
 	case "Invoice.lastTransactionDate":
 		if e.complexity.Invoice.LastTransactionDate == nil {
@@ -484,20 +464,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Invoice.Suppliers(childComplexity), true
 
-	case "Invoice.taken":
-		if e.complexity.Invoice.Taken == nil {
-			break
-		}
-
-		return e.complexity.Invoice.Taken(childComplexity), true
-
-	case "Invoice.takenOn":
-		if e.complexity.Invoice.TakenOn == nil {
-			break
-		}
-
-		return e.complexity.Invoice.TakenOn(childComplexity), true
-
 	case "Invoice.taxableAmount":
 		if e.complexity.Invoice.TaxableAmount == nil {
 			break
@@ -512,12 +478,19 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Invoice.Upc(childComplexity), true
 
-	case "Invoice.workspaceId":
-		if e.complexity.Invoice.WorkspaceID == nil {
+	case "InvoiceBuyer.buyers":
+		if e.complexity.InvoiceBuyer.Buyers == nil {
 			break
 		}
 
-		return e.complexity.Invoice.WorkspaceID(childComplexity), true
+		return e.complexity.InvoiceBuyer.Buyers(childComplexity), true
+
+	case "InvoiceBuyer.invoices":
+		if e.complexity.InvoiceBuyer.Invoices == nil {
+			break
+		}
+
+		return e.complexity.InvoiceBuyer.Invoices(childComplexity), true
 
 	case "Mutation.createProduct":
 		if e.complexity.Mutation.CreateProduct == nil {
@@ -972,17 +945,29 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Product.VatApplication(childComplexity), true
 
-	case "Query.invoiceByBillNumber":
-		if e.complexity.Query.InvoiceByBillNumber == nil {
+	case "Query.invoiceByBuyer":
+		if e.complexity.Query.InvoiceByBuyer == nil {
 			break
 		}
 
-		args, err := ec.field_Query_invoiceByBillNumber_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_invoiceByBuyer_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Query.InvoiceByBillNumber(childComplexity, args["billNumber"].(string)), true
+		return e.complexity.Query.InvoiceByBuyer(childComplexity, args["buyerId"].(string), args["fromDate"].(string), args["toDate"].(string)), true
+
+	case "Query.invoiceDetails":
+		if e.complexity.Query.InvoiceDetails == nil {
+			break
+		}
+
+		args, err := ec.field_Query_invoiceDetails_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.InvoiceDetails(childComplexity, args["buyerId"].(string), args["supplierId"].(string), args["fromDate"].(string), args["toDate"].(string)), true
 
 	case "Query.orderByUserId":
 		if e.complexity.Query.OrderByUserID == nil {
@@ -1633,22 +1618,19 @@ type Invoice {
 	lastTransactionDate: String
 	receivedOn: String
 	emailPrepared: Boolean
-	emailPreparedOn: String
-	taken: String
-	takenOn: String
-	lastHostAddress: String
-	workspaceId: Int
-	ede2_Taken: Boolean
-	ede2_TakenDate: String
+	emailbillNumberTakenDate: String
 	ede2_TakenBatchID: String
 	taxableAmount: Float
     products:[Product!]!
-	suppliers:[User!]!
-	buyers:[User!]!
-
-	
+	suppliers:User!
+	buyers:User!
 }
 
+
+type InvoiceBuyer {
+	invoices:[Invoice!]!
+	buyers:User!
+}
 
 type Query {
   products(productName: String!): [Product!]!
@@ -1658,7 +1640,8 @@ type Query {
   userByUserName(username: String!):User!
   userByMobile(mobile: String!):User!
   orderByUserId(buyerId: String!):[Order!]!
-  invoiceByBillNumber(billNumber: String!): [Invoice!]!
+  invoiceDetails(buyerId:String!, supplierId: String!, fromDate: String!, toDate: String!): [Invoice!]!
+  invoiceByBuyer(buyerId:String!, fromDate: String!, toDate: String!): InvoiceBuyer!
 }
 
 input NewProduct {
@@ -1706,18 +1689,78 @@ func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_invoiceByBillNumber_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Query_invoiceByBuyer_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
-	if tmp, ok := rawArgs["billNumber"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("billNumber"))
+	if tmp, ok := rawArgs["buyerId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("buyerId"))
 		arg0, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["billNumber"] = arg0
+	args["buyerId"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["fromDate"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("fromDate"))
+		arg1, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["fromDate"] = arg1
+	var arg2 string
+	if tmp, ok := rawArgs["toDate"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("toDate"))
+		arg2, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["toDate"] = arg2
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_invoiceDetails_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["buyerId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("buyerId"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["buyerId"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["supplierId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("supplierId"))
+		arg1, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["supplierId"] = arg1
+	var arg2 string
+	if tmp, ok := rawArgs["fromDate"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("fromDate"))
+		arg2, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["fromDate"] = arg2
+	var arg3 string
+	if tmp, ok := rawArgs["toDate"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("toDate"))
+		arg3, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["toDate"] = arg3
 	return args, nil
 }
 
@@ -2729,7 +2772,7 @@ func (ec *executionContext) _Invoice_emailPrepared(ctx context.Context, field gr
 	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Invoice_emailPreparedOn(ctx context.Context, field graphql.CollectedField, obj *model.Invoice) (ret graphql.Marshaler) {
+func (ec *executionContext) _Invoice_emailbillNumberTakenDate(ctx context.Context, field graphql.CollectedField, obj *model.Invoice) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -2747,199 +2790,7 @@ func (ec *executionContext) _Invoice_emailPreparedOn(ctx context.Context, field 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.EmailPreparedOn, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Invoice_taken(ctx context.Context, field graphql.CollectedField, obj *model.Invoice) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Invoice",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Taken, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Invoice_takenOn(ctx context.Context, field graphql.CollectedField, obj *model.Invoice) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Invoice",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.TakenOn, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Invoice_lastHostAddress(ctx context.Context, field graphql.CollectedField, obj *model.Invoice) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Invoice",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.LastHostAddress, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Invoice_workspaceId(ctx context.Context, field graphql.CollectedField, obj *model.Invoice) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Invoice",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.WorkspaceID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*int)
-	fc.Result = res
-	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Invoice_ede2_Taken(ctx context.Context, field graphql.CollectedField, obj *model.Invoice) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Invoice",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Ede2Taken, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*bool)
-	fc.Result = res
-	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Invoice_ede2_TakenDate(ctx context.Context, field graphql.CollectedField, obj *model.Invoice) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Invoice",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Ede2TakenDate, nil
+		return obj.EmailbillNumberTakenDate, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3082,9 +2933,9 @@ func (ec *executionContext) _Invoice_suppliers(ctx context.Context, field graphq
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*model.User)
+	res := resTmp.(*model.User)
 	fc.Result = res
-	return ec.marshalNUser2ᚕᚖawacs_smart_api_serviceᚋgraphᚋmodelᚐUserᚄ(ctx, field.Selections, res)
+	return ec.marshalNUser2ᚖawacs_smart_api_serviceᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Invoice_buyers(ctx context.Context, field graphql.CollectedField, obj *model.Invoice) (ret graphql.Marshaler) {
@@ -3117,9 +2968,79 @@ func (ec *executionContext) _Invoice_buyers(ctx context.Context, field graphql.C
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*model.User)
+	res := resTmp.(*model.User)
 	fc.Result = res
-	return ec.marshalNUser2ᚕᚖawacs_smart_api_serviceᚋgraphᚋmodelᚐUserᚄ(ctx, field.Selections, res)
+	return ec.marshalNUser2ᚖawacs_smart_api_serviceᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _InvoiceBuyer_invoices(ctx context.Context, field graphql.CollectedField, obj *model.InvoiceBuyer) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "InvoiceBuyer",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Invoices, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.Invoice)
+	fc.Result = res
+	return ec.marshalNInvoice2ᚕᚖawacs_smart_api_serviceᚋgraphᚋmodelᚐInvoiceᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _InvoiceBuyer_buyers(ctx context.Context, field graphql.CollectedField, obj *model.InvoiceBuyer) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "InvoiceBuyer",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Buyers, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.User)
+	fc.Result = res
+	return ec.marshalNUser2ᚖawacs_smart_api_serviceᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Mutation_createProduct(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -5504,7 +5425,7 @@ func (ec *executionContext) _Query_orderByUserId(ctx context.Context, field grap
 	return ec.marshalNOrder2ᚕᚖawacs_smart_api_serviceᚋgraphᚋmodelᚐOrderᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Query_invoiceByBillNumber(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+func (ec *executionContext) _Query_invoiceDetails(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -5521,7 +5442,7 @@ func (ec *executionContext) _Query_invoiceByBillNumber(ctx context.Context, fiel
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Query_invoiceByBillNumber_args(ctx, rawArgs)
+	args, err := ec.field_Query_invoiceDetails_args(ctx, rawArgs)
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
@@ -5529,7 +5450,7 @@ func (ec *executionContext) _Query_invoiceByBillNumber(ctx context.Context, fiel
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().InvoiceByBillNumber(rctx, args["billNumber"].(string))
+		return ec.resolvers.Query().InvoiceDetails(rctx, args["buyerId"].(string), args["supplierId"].(string), args["fromDate"].(string), args["toDate"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -5544,6 +5465,48 @@ func (ec *executionContext) _Query_invoiceByBillNumber(ctx context.Context, fiel
 	res := resTmp.([]*model.Invoice)
 	fc.Result = res
 	return ec.marshalNInvoice2ᚕᚖawacs_smart_api_serviceᚋgraphᚋmodelᚐInvoiceᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_invoiceByBuyer(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_invoiceByBuyer_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().InvoiceByBuyer(rctx, args["buyerId"].(string), args["fromDate"].(string), args["toDate"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.InvoiceBuyer)
+	fc.Result = res
+	return ec.marshalNInvoiceBuyer2ᚖawacs_smart_api_serviceᚋgraphᚋmodelᚐInvoiceBuyer(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -8466,20 +8429,8 @@ func (ec *executionContext) _Invoice(ctx context.Context, sel ast.SelectionSet, 
 			out.Values[i] = ec._Invoice_receivedOn(ctx, field, obj)
 		case "emailPrepared":
 			out.Values[i] = ec._Invoice_emailPrepared(ctx, field, obj)
-		case "emailPreparedOn":
-			out.Values[i] = ec._Invoice_emailPreparedOn(ctx, field, obj)
-		case "taken":
-			out.Values[i] = ec._Invoice_taken(ctx, field, obj)
-		case "takenOn":
-			out.Values[i] = ec._Invoice_takenOn(ctx, field, obj)
-		case "lastHostAddress":
-			out.Values[i] = ec._Invoice_lastHostAddress(ctx, field, obj)
-		case "workspaceId":
-			out.Values[i] = ec._Invoice_workspaceId(ctx, field, obj)
-		case "ede2_Taken":
-			out.Values[i] = ec._Invoice_ede2_Taken(ctx, field, obj)
-		case "ede2_TakenDate":
-			out.Values[i] = ec._Invoice_ede2_TakenDate(ctx, field, obj)
+		case "emailbillNumberTakenDate":
+			out.Values[i] = ec._Invoice_emailbillNumberTakenDate(ctx, field, obj)
 		case "ede2_TakenBatchID":
 			out.Values[i] = ec._Invoice_ede2_TakenBatchID(ctx, field, obj)
 		case "taxableAmount":
@@ -8496,6 +8447,38 @@ func (ec *executionContext) _Invoice(ctx context.Context, sel ast.SelectionSet, 
 			}
 		case "buyers":
 			out.Values[i] = ec._Invoice_buyers(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var invoiceBuyerImplementors = []string{"InvoiceBuyer"}
+
+func (ec *executionContext) _InvoiceBuyer(ctx context.Context, sel ast.SelectionSet, obj *model.InvoiceBuyer) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, invoiceBuyerImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("InvoiceBuyer")
+		case "invoices":
+			out.Values[i] = ec._InvoiceBuyer_invoices(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "buyers":
+			out.Values[i] = ec._InvoiceBuyer_buyers(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -8854,7 +8837,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				}
 				return res
 			})
-		case "invoiceByBillNumber":
+		case "invoiceDetails":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
 				defer func() {
@@ -8862,7 +8845,21 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_invoiceByBillNumber(ctx, field)
+				res = ec._Query_invoiceDetails(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "invoiceByBuyer":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_invoiceByBuyer(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
@@ -9450,6 +9447,20 @@ func (ec *executionContext) marshalNInvoice2ᚖawacs_smart_api_serviceᚋgraph�
 	return ec._Invoice(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNInvoiceBuyer2awacs_smart_api_serviceᚋgraphᚋmodelᚐInvoiceBuyer(ctx context.Context, sel ast.SelectionSet, v model.InvoiceBuyer) graphql.Marshaler {
+	return ec._InvoiceBuyer(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNInvoiceBuyer2ᚖawacs_smart_api_serviceᚋgraphᚋmodelᚐInvoiceBuyer(ctx context.Context, sel ast.SelectionSet, v *model.InvoiceBuyer) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._InvoiceBuyer(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalNNewProduct2awacs_smart_api_serviceᚋgraphᚋmodelᚐNewProduct(ctx context.Context, v interface{}) (model.NewProduct, error) {
 	res, err := ec.unmarshalInputNewProduct(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -9570,43 +9581,6 @@ func (ec *executionContext) marshalNString2string(ctx context.Context, sel ast.S
 
 func (ec *executionContext) marshalNUser2awacs_smart_api_serviceᚋgraphᚋmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v model.User) graphql.Marshaler {
 	return ec._User(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalNUser2ᚕᚖawacs_smart_api_serviceᚋgraphᚋmodelᚐUserᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.User) graphql.Marshaler {
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalNUser2ᚖawacs_smart_api_serviceᚋgraphᚋmodelᚐUser(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-	return ret
 }
 
 func (ec *executionContext) marshalNUser2ᚖawacs_smart_api_serviceᚋgraphᚋmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v *model.User) graphql.Marshaler {

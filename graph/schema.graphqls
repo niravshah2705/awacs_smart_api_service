@@ -156,22 +156,19 @@ type Invoice {
 	lastTransactionDate: String
 	receivedOn: String
 	emailPrepared: Boolean
-	emailPreparedOn: String
-	taken: String
-	takenOn: String
-	lastHostAddress: String
-	workspaceId: Int
-	ede2_Taken: Boolean
-	ede2_TakenDate: String
+	emailbillNumberTakenDate: String
 	ede2_TakenBatchID: String
 	taxableAmount: Float
     products:[Product!]!
-	suppliers:[User!]!
-	buyers:[User!]!
-
-	
+	suppliers:User!
+	buyers:User!
 }
 
+
+type InvoiceBuyer {
+	invoices:[Invoice!]!
+	buyers:User!
+}
 
 type Query {
   products(productName: String!): [Product!]!
@@ -181,7 +178,8 @@ type Query {
   userByUserName(username: String!):User!
   userByMobile(mobile: String!):User!
   orderByUserId(buyerId: String!):[Order!]!
-  invoiceByBillNumber(billNumber: String!): [Invoice!]!
+  invoiceDetails(buyerId:String!, supplierId: String!, fromDate: String!, toDate: String!): [Invoice!]!
+  invoiceByBuyer(buyerId:String!, fromDate: String!, toDate: String!): InvoiceBuyer!
 }
 
 input NewProduct {
