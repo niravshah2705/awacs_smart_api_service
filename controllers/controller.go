@@ -3,11 +3,20 @@ package controllers
 import (
 	"awacs_smart_api_service/graph"
 	"awacs_smart_api_service/graph/generated"
+	"fmt"
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
+	"github.com/brkelkar/common_utils/logger"
 	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 )
+
+//LogResponceEvent responce logger
+func logUA(ua string) {
+	logger.Info("UA_details", zap.String("UA", ua))
+
+}
 
 // Defining the Graphql handler
 func GraphqlHandler() gin.HandlerFunc {
@@ -16,6 +25,8 @@ func GraphqlHandler() gin.HandlerFunc {
 	h := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: &graph.Resolver{}}))
 
 	return func(c *gin.Context) {
+		c.Request.UserAgent()
+		logUA(c.Request.UserAgent())
 		h.ServeHTTP(c.Writer, c.Request)
 	}
 }
@@ -25,6 +36,9 @@ func PlaygroundHandler() gin.HandlerFunc {
 	h := playground.Handler("GraphQL", "/query")
 
 	return func(c *gin.Context) {
+		URI := c.Request.RequestURI
+		userAgent := c.Request.UserAgent()
+		fmt.Println(URI, userAgent)
 		h.ServeHTTP(c.Writer, c.Request)
 	}
 }

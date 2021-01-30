@@ -9,10 +9,35 @@ import (
 	"awacs_smart_api_service/services"
 	"context"
 	"fmt"
-	"log"
 
-	db "github.com/brkelkar/common_utils/databases"
+	"github.com/brkelkar/common_utils/logger"
+	"go.uber.org/zap"
 )
+
+var service = "awacs_search_api"
+
+//LogResponceEvent responce logger
+func LogResponceEvent(RequestType string, responceType string, rVal int, responceLen int) {
+	logger.Info("Responce", zap.String("service", service),
+		zap.String("type", RequestType),
+		zap.String("responceType", responceType),
+		zap.Int("status_code", rVal),
+		zap.Int("record_count", responceLen))
+
+}
+
+func LogResponce(RequestType string, resultLen int, err error) bool {
+	if err != nil {
+		LogResponceEvent(RequestType, "Error", 500, -1)
+		return false
+	}
+	if resultLen == 0 {
+		LogResponceEvent(RequestType, "NotFound", 400, 0)
+	} else {
+		LogResponceEvent(RequestType, "success", 200, resultLen)
+	}
+	return true
+}
 
 func (r *mutationResolver) CreateProduct(ctx context.Context, input model.NewProduct) (*model.Product, error) {
 	panic(fmt.Errorf("not implemented"))
@@ -21,10 +46,9 @@ func (r *mutationResolver) CreateProduct(ctx context.Context, input model.NewPro
 func (r *queryResolver) Products(ctx context.Context, productName string) ([]*model.Product, error) {
 	var Product []*model.Product
 	err := services.Products(&Product, productName)
-	if err != nil {
-		fmt.Print(err)
+	ret := LogResponce("Distributor_product_search", len(Product), err)
+	if !ret {
 		return nil, err
-
 	}
 	return Product, nil
 }
@@ -32,65 +56,52 @@ func (r *queryResolver) Products(ctx context.Context, productName string) ([]*mo
 func (r *queryResolver) ProductsAwacs(ctx context.Context, productName string) ([]*model.AWACSProduct, error) {
 	var AwacsProduct []*model.AWACSProduct
 	err := services.ProductsAwacs(&AwacsProduct, productName)
-	if err != nil {
-		fmt.Print(err)
+	ret := LogResponce("Awacs_Products_search", len(AwacsProduct), err)
+	if !ret {
 		return nil, err
-
 	}
+
 	return AwacsProduct, nil
 }
 
 func (r *queryResolver) ProductByItemCode(ctx context.Context, itemCode string) ([]*model.AWACSProduct, error) {
 	var Product []*model.AWACSProduct
 	err := services.ProductByItemCode(&Product, itemCode)
-	if err != nil {
-		fmt.Print(err)
+	ret := LogResponce("Awacs_Products_search_ItemCode", len(Product), err)
+	if !ret {
 		return nil, err
-
 	}
+
 	return Product, nil
 }
 
 func (r *queryResolver) UserByID(ctx context.Context, id string) (*model.User, error) {
 	var User model.User
 	err := services.UserByID(&User, id)
-	if err != nil {
-		log.Print(err)
-		return nil, err
-
-	}
-	return &User, nil
+	LogResponce("User_by_Id", 1, err)
+	return &User, err
 }
 
 func (r *queryResolver) UserByUserName(ctx context.Context, username string) (*model.User, error) {
 	var User model.User
-	err := db.DB["smartdb"].Where("Username='" + username + "'").First(&User).Error
-	if err != nil {
-		log.Print(err)
-		return nil, err
-
-	}
-	return &User, nil
+	err := services.UserByUserName(&User, username)
+	LogResponce("User_by_Name", 1, err)
+	return &User, err
 }
 
 func (r *queryResolver) UserByMobile(ctx context.Context, mobile string) (*model.User, error) {
 	var User model.User
 	err := services.UserByMobile(&User, mobile)
-	if err != nil {
-		log.Print(err)
-		return nil, err
-
-	}
-	return &User, nil
+	LogResponce("User_by_Mobile", 1, err)
+	return &User, err
 }
 
 func (r *queryResolver) OrderByUserID(ctx context.Context, buyerID string) ([]*model.Order, error) {
 	var Order []*model.Order
 	err := services.OrderByUserId(&Order, buyerID)
-	if err != nil {
-		log.Print(err)
+	ret := LogResponce("Order_by_User_ID", len(Order), err)
+	if !ret {
 		return nil, err
-
 	}
 	return Order, nil
 }
@@ -98,10 +109,9 @@ func (r *queryResolver) OrderByUserID(ctx context.Context, buyerID string) ([]*m
 func (r *queryResolver) InvoiceDetails(ctx context.Context, buyerID string, supplierID string, fromDate string, toDate string) ([]*model.Invoice, error) {
 	var Invoice []*model.Invoice
 	err := services.InvoiceDetails(&Invoice, buyerID, supplierID, fromDate, toDate)
-	if err != nil {
-		log.Print(err)
+	ret := LogResponce("Invoice_Details", len(Invoice), err)
+	if !ret {
 		return nil, err
-
 	}
 	return Invoice, nil
 }
@@ -109,11 +119,7 @@ func (r *queryResolver) InvoiceDetails(ctx context.Context, buyerID string, supp
 func (r *queryResolver) InvoiceByBuyer(ctx context.Context, buyerID string, fromDate string, toDate string) (*model.InvoiceBuyer, error) {
 	var Invoice model.InvoiceBuyer
 	err := services.InvoiceByBuyer(&Invoice, buyerID, fromDate, toDate)
-	if err != nil {
-		log.Print(err)
-		return nil, err
-
-	}
+	LogResponce("Invoice_by_Buyer", 1, err)
 	return &Invoice, nil
 }
 
