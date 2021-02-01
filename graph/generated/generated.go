@@ -91,6 +91,7 @@ type ComplexityRoot struct {
 	}
 
 	Order struct {
+		Buyer          func(childComplexity int) int
 		BuyerID        func(childComplexity int) int
 		DeliveryMode   func(childComplexity int) int
 		DeliveryOption func(childComplexity int) int
@@ -103,6 +104,7 @@ type ComplexityRoot struct {
 		Remarks        func(childComplexity int) int
 		Source         func(childComplexity int) int
 		Status         func(childComplexity int) int
+		Supplier       func(childComplexity int) int
 		SupplierID     func(childComplexity int) int
 		TakenOn        func(childComplexity int) int
 		WorkspaceID    func(childComplexity int) int
@@ -111,6 +113,12 @@ type ComplexityRoot struct {
 	OrderBuyerStatus struct {
 		Buyer       func(childComplexity int) int
 		OrderStatus func(childComplexity int) int
+	}
+
+	OrderByWorkspaceID struct {
+		Buyer    func(childComplexity int) int
+		Order    func(childComplexity int) int
+		Supplier func(childComplexity int) int
 	}
 
 	OrderStatus struct {
@@ -179,7 +187,9 @@ type ComplexityRoot struct {
 	Query struct {
 		InvoiceByBuyer           func(childComplexity int, buyerID string, fromDate string, toDate string) int
 		InvoiceDetails           func(childComplexity int, buyerID string, supplierID string, fromDate string, toDate string) int
+		OrderByOrderNumber       func(childComplexity int, orderNumber string) int
 		OrderByUserID            func(childComplexity int, buyerID string) int
+		OrderByWorkspaceID       func(childComplexity int, workspaceID string, fromDate string, toDate string) int
 		OrdersummaryByBuyerID    func(childComplexity int, buyerID string, fromDate string, toDate string) int
 		OrdersummaryBySupplierID func(childComplexity int, supplierID string, fromDate string, toDate string) int
 		ProductByItemCode        func(childComplexity int, itemCode string) int
@@ -258,6 +268,8 @@ type QueryResolver interface {
 	InvoiceByBuyer(ctx context.Context, buyerID string, fromDate string, toDate string) (*model.InvoiceBuyer, error)
 	OrdersummaryBySupplierID(ctx context.Context, supplierID string, fromDate string, toDate string) (*model.OrderSupplierStatus, error)
 	OrdersummaryByBuyerID(ctx context.Context, buyerID string, fromDate string, toDate string) (*model.OrderBuyerStatus, error)
+	OrderByWorkspaceID(ctx context.Context, workspaceID string, fromDate string, toDate string) (*model.OrderByWorkspaceID, error)
+	OrderByOrderNumber(ctx context.Context, orderNumber string) (*model.Order, error)
 }
 
 type executableSchema struct {
@@ -525,6 +537,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.CreateProduct(childComplexity, args["input"].(model.NewProduct)), true
 
+	case "Order.buyer":
+		if e.complexity.Order.Buyer == nil {
+			break
+		}
+
+		return e.complexity.Order.Buyer(childComplexity), true
+
 	case "Order.buyerId":
 		if e.complexity.Order.BuyerID == nil {
 			break
@@ -609,6 +628,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Order.Status(childComplexity), true
 
+	case "Order.supplier":
+		if e.complexity.Order.Supplier == nil {
+			break
+		}
+
+		return e.complexity.Order.Supplier(childComplexity), true
+
 	case "Order.supplierId":
 		if e.complexity.Order.SupplierID == nil {
 			break
@@ -643,6 +669,27 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.OrderBuyerStatus.OrderStatus(childComplexity), true
+
+	case "OrderByWorkspaceId.buyer":
+		if e.complexity.OrderByWorkspaceID.Buyer == nil {
+			break
+		}
+
+		return e.complexity.OrderByWorkspaceID.Buyer(childComplexity), true
+
+	case "OrderByWorkspaceId.Order":
+		if e.complexity.OrderByWorkspaceID.Order == nil {
+			break
+		}
+
+		return e.complexity.OrderByWorkspaceID.Order(childComplexity), true
+
+	case "OrderByWorkspaceId.supplier":
+		if e.complexity.OrderByWorkspaceID.Supplier == nil {
+			break
+		}
+
+		return e.complexity.OrderByWorkspaceID.Supplier(childComplexity), true
 
 	case "OrderStatus.billed":
 		if e.complexity.OrderStatus.Billed == nil {
@@ -1046,6 +1093,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.InvoiceDetails(childComplexity, args["buyerId"].(string), args["supplierId"].(string), args["fromDate"].(string), args["toDate"].(string)), true
 
+	case "Query.orderByOrderNumber":
+		if e.complexity.Query.OrderByOrderNumber == nil {
+			break
+		}
+
+		args, err := ec.field_Query_orderByOrderNumber_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.OrderByOrderNumber(childComplexity, args["orderNumber"].(string)), true
+
 	case "Query.orderByUserId":
 		if e.complexity.Query.OrderByUserID == nil {
 			break
@@ -1057,6 +1116,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.OrderByUserID(childComplexity, args["buyerId"].(string)), true
+
+	case "Query.orderByWorkspaceId":
+		if e.complexity.Query.OrderByWorkspaceID == nil {
+			break
+		}
+
+		args, err := ec.field_Query_orderByWorkspaceId_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.OrderByWorkspaceID(childComplexity, args["workspaceId"].(string), args["fromDate"].(string), args["toDate"].(string)), true
 
 	case "Query.ordersummaryByBuyerId":
 		if e.complexity.Query.OrdersummaryByBuyerID == nil {
@@ -1681,6 +1752,12 @@ iFSCCode: String
 userId: String!
 }
 
+type OrderByWorkspaceId{
+	buyer:User
+	supplier:User
+	Order:[Order!]!
+}
+
 type Order {
   	id:ID!
 	source:String
@@ -1696,7 +1773,9 @@ type Order {
 	status:String
 	invoiceNumber:String
 	isBounced:Boolean
- products:[Product!]!
+ 	products:[Product!]!
+	buyer:User
+	supplier:User
 }
 
 type Invoice {
@@ -1758,6 +1837,8 @@ type Query {
   invoiceByBuyer(buyerId:String!, fromDate: String!, toDate: String!): InvoiceBuyer!
   ordersummaryBySupplierId(supplierId:String!,fromDate:String!,toDate:String!):OrderSupplierStatus!
   ordersummaryByBuyerId(buyerId:String!,fromDate:String!,toDate:String!):OrderBuyerStatus!
+  orderByWorkspaceId(workspaceId: String!,fromDate:String!,toDate:String!):OrderByWorkspaceId!
+  orderByOrderNumber(orderNumber: String!):Order!
 }
 
 input NewProduct {
@@ -1880,6 +1961,21 @@ func (ec *executionContext) field_Query_invoiceDetails_args(ctx context.Context,
 	return args, nil
 }
 
+func (ec *executionContext) field_Query_orderByOrderNumber_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["orderNumber"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("orderNumber"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["orderNumber"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Query_orderByUserId_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -1892,6 +1988,39 @@ func (ec *executionContext) field_Query_orderByUserId_args(ctx context.Context, 
 		}
 	}
 	args["buyerId"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_orderByWorkspaceId_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["workspaceId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("workspaceId"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["workspaceId"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["fromDate"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("fromDate"))
+		arg1, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["fromDate"] = arg1
+	var arg2 string
+	if tmp, ok := rawArgs["toDate"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("toDate"))
+		arg2, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["toDate"] = arg2
 	return args, nil
 }
 
@@ -3759,6 +3888,70 @@ func (ec *executionContext) _Order_products(ctx context.Context, field graphql.C
 	return ec.marshalNProduct2ᚕᚖawacs_smart_api_serviceᚋgraphᚋmodelᚐProductᚄ(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Order_buyer(ctx context.Context, field graphql.CollectedField, obj *model.Order) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Order",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Buyer, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.User)
+	fc.Result = res
+	return ec.marshalOUser2ᚖawacs_smart_api_serviceᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Order_supplier(ctx context.Context, field graphql.CollectedField, obj *model.Order) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Order",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Supplier, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.User)
+	fc.Result = res
+	return ec.marshalOUser2ᚖawacs_smart_api_serviceᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _OrderBuyerStatus_buyer(ctx context.Context, field graphql.CollectedField, obj *model.OrderBuyerStatus) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -3827,6 +4020,105 @@ func (ec *executionContext) _OrderBuyerStatus_orderStatus(ctx context.Context, f
 	res := resTmp.([]*model.OrderStatus)
 	fc.Result = res
 	return ec.marshalNOrderStatus2ᚕᚖawacs_smart_api_serviceᚋgraphᚋmodelᚐOrderStatusᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _OrderByWorkspaceId_buyer(ctx context.Context, field graphql.CollectedField, obj *model.OrderByWorkspaceID) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "OrderByWorkspaceId",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Buyer, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.User)
+	fc.Result = res
+	return ec.marshalOUser2ᚖawacs_smart_api_serviceᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _OrderByWorkspaceId_supplier(ctx context.Context, field graphql.CollectedField, obj *model.OrderByWorkspaceID) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "OrderByWorkspaceId",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Supplier, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.User)
+	fc.Result = res
+	return ec.marshalOUser2ᚖawacs_smart_api_serviceᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _OrderByWorkspaceId_Order(ctx context.Context, field graphql.CollectedField, obj *model.OrderByWorkspaceID) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "OrderByWorkspaceId",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Order, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.Order)
+	fc.Result = res
+	return ec.marshalNOrder2ᚕᚖawacs_smart_api_serviceᚋgraphᚋmodelᚐOrderᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _OrderStatus_orderDate(ctx context.Context, field graphql.CollectedField, obj *model.OrderStatus) (ret graphql.Marshaler) {
@@ -6053,6 +6345,90 @@ func (ec *executionContext) _Query_ordersummaryByBuyerId(ctx context.Context, fi
 	res := resTmp.(*model.OrderBuyerStatus)
 	fc.Result = res
 	return ec.marshalNOrderBuyerStatus2ᚖawacs_smart_api_serviceᚋgraphᚋmodelᚐOrderBuyerStatus(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_orderByWorkspaceId(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_orderByWorkspaceId_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().OrderByWorkspaceID(rctx, args["workspaceId"].(string), args["fromDate"].(string), args["toDate"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.OrderByWorkspaceID)
+	fc.Result = res
+	return ec.marshalNOrderByWorkspaceId2ᚖawacs_smart_api_serviceᚋgraphᚋmodelᚐOrderByWorkspaceID(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_orderByOrderNumber(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_orderByOrderNumber_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().OrderByOrderNumber(rctx, args["orderNumber"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Order)
+	fc.Result = res
+	return ec.marshalNOrder2ᚖawacs_smart_api_serviceᚋgraphᚋmodelᚐOrder(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -9123,6 +9499,10 @@ func (ec *executionContext) _Order(ctx context.Context, sel ast.SelectionSet, ob
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "buyer":
+			out.Values[i] = ec._Order_buyer(ctx, field, obj)
+		case "supplier":
+			out.Values[i] = ec._Order_supplier(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -9152,6 +9532,37 @@ func (ec *executionContext) _OrderBuyerStatus(ctx context.Context, sel ast.Selec
 			}
 		case "orderStatus":
 			out.Values[i] = ec._OrderBuyerStatus_orderStatus(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var orderByWorkspaceIdImplementors = []string{"OrderByWorkspaceId"}
+
+func (ec *executionContext) _OrderByWorkspaceId(ctx context.Context, sel ast.SelectionSet, obj *model.OrderByWorkspaceID) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, orderByWorkspaceIdImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("OrderByWorkspaceId")
+		case "buyer":
+			out.Values[i] = ec._OrderByWorkspaceId_buyer(ctx, field, obj)
+		case "supplier":
+			out.Values[i] = ec._OrderByWorkspaceId_supplier(ctx, field, obj)
+		case "Order":
+			out.Values[i] = ec._OrderByWorkspaceId_Order(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -9540,6 +9951,34 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_ordersummaryByBuyerId(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "orderByWorkspaceId":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_orderByWorkspaceId(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "orderByOrderNumber":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_orderByOrderNumber(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
@@ -10146,6 +10585,10 @@ func (ec *executionContext) unmarshalNNewProduct2awacs_smart_api_serviceᚋgraph
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) marshalNOrder2awacs_smart_api_serviceᚋgraphᚋmodelᚐOrder(ctx context.Context, sel ast.SelectionSet, v model.Order) graphql.Marshaler {
+	return ec._Order(ctx, sel, &v)
+}
+
 func (ec *executionContext) marshalNOrder2ᚕᚖawacs_smart_api_serviceᚋgraphᚋmodelᚐOrderᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Order) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
@@ -10205,6 +10648,20 @@ func (ec *executionContext) marshalNOrderBuyerStatus2ᚖawacs_smart_api_service�
 		return graphql.Null
 	}
 	return ec._OrderBuyerStatus(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNOrderByWorkspaceId2awacs_smart_api_serviceᚋgraphᚋmodelᚐOrderByWorkspaceID(ctx context.Context, sel ast.SelectionSet, v model.OrderByWorkspaceID) graphql.Marshaler {
+	return ec._OrderByWorkspaceId(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNOrderByWorkspaceId2ᚖawacs_smart_api_serviceᚋgraphᚋmodelᚐOrderByWorkspaceID(ctx context.Context, sel ast.SelectionSet, v *model.OrderByWorkspaceID) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._OrderByWorkspaceId(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNOrderStatus2ᚕᚖawacs_smart_api_serviceᚋgraphᚋmodelᚐOrderStatusᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.OrderStatus) graphql.Marshaler {
@@ -10693,6 +11150,13 @@ func (ec *executionContext) marshalOUser2ᚕᚖawacs_smart_api_serviceᚋgraph�
 	}
 	wg.Wait()
 	return ret
+}
+
+func (ec *executionContext) marshalOUser2ᚖawacs_smart_api_serviceᚋgraphᚋmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v *model.User) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._User(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalO__EnumValue2ᚕgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐEnumValueᚄ(ctx context.Context, sel ast.SelectionSet, v []introspection.EnumValue) graphql.Marshaler {

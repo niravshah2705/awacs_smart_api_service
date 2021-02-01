@@ -16,6 +16,8 @@ type Order struct {
 	InvoiceNumber  *string    `json:"invoiceNumber"`
 	IsBounced      *bool      `json:"isBounced"`
 	Products       []*Product `json:"products"`
+	Buyer          *User      `json:"buyer"`
+	Supplier       *User      `json:"supplier"`
 }
 
 type OrderDetails struct {
@@ -44,6 +46,18 @@ type OrderDetails struct {
 	Mrp              float64  `json:"MRP"`
 	Ptr              *float64 `json:"PTR"`
 	Pts              *float64 `json:"PTS"`
+	SupplierName     string   `json:"supplierName"`
+	SupplierEmail    string   `json:"supplierEmail"`
+	SupplierMobile   string   `json:"supplierMobile"`
+	SupplierPincode  string   `json:"supplierPincode"`
+	SupplierCity     string   `json:"supplierCity"`
+	SupplierState    string   `json:"supplierState"`
+	BuyerName        string   `json:"buyerName"`
+	BuyerEmail       string   `json:"buyerEmail"`
+	BuyerMobile      string   `json:"buyerMobile"`
+	BuyerPincode     string   `json:"buyerPincode"`
+	BuyerCity        string   `json:"buyerCity"`
+	BuyerState       string   `json:"buyerState"`
 }
 
 type OrderBuyerStatus struct {
@@ -79,18 +93,24 @@ type OrderBuyerStatusDetails struct {
 }
 
 type OrderStatusSupplierDetails struct {
-	SupplierId string `json:"supplierID"`
-	OrderDate  string `json:"orderDate"`
-	Pending    string `json:"pending"`
-	Bounced    string `json:"bounced"`
-	Billed     string `json:"billed"`
+	SupplierId   string `json:"supplierID"`
+	OrderDate    string `json:"orderDate"`
+	Pending      string `json:"pending"`
+	Bounced      string `json:"bounced"`
+	Billed       string `json:"billed"`
 	SupplierName string `json:"supplierName"`
-	City      string `json:"city"`
-	Email     string `json:"email"`
-	Mobile    string `json:"mobile"`
-	PhoneNo   string `json:"phoneNo"`
-	Pincode   string `json:"pincode"`
-	State     string `json:"state"`
+	City         string `json:"city"`
+	Email        string `json:"email"`
+	Mobile       string `json:"mobile"`
+	PhoneNo      string `json:"phoneNo"`
+	Pincode      string `json:"pincode"`
+	State        string `json:"state"`
+}
+
+type OrderByWorkspaceID struct {
+	Buyer    *User    `json:"buyer"`
+	Supplier *User    `json:"supplier"`
+	Order    []*Order `json:"Order"`
 }
 
 //TableName retunrs source table name

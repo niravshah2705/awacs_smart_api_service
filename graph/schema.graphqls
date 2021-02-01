@@ -118,6 +118,12 @@ iFSCCode: String
 userId: String!
 }
 
+type OrderByWorkspaceId{
+	buyer:User
+	supplier:User
+	Order:[Order!]!
+}
+
 type Order {
   	id:ID!
 	source:String
@@ -133,7 +139,9 @@ type Order {
 	status:String
 	invoiceNumber:String
 	isBounced:Boolean
- products:[Product!]!
+ 	products:[Product!]!
+	buyer:User
+	supplier:User
 }
 
 type Invoice {
@@ -195,6 +203,8 @@ type Query {
   invoiceByBuyer(buyerId:String!, fromDate: String!, toDate: String!): InvoiceBuyer!
   ordersummaryBySupplierId(supplierId:String!,fromDate:String!,toDate:String!):OrderSupplierStatus!
   ordersummaryByBuyerId(buyerId:String!,fromDate:String!,toDate:String!):OrderBuyerStatus!
+  orderByWorkspaceId(workspaceId: String!,fromDate:String!,toDate:String!):OrderByWorkspaceId!
+  orderByOrderNumber(orderNumber: String!):Order!
 }
 
 input NewProduct {

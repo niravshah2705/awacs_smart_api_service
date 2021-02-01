@@ -112,6 +112,26 @@ func (r *queryResolver) OrdersummaryByBuyerID(ctx context.Context, buyerID strin
 	return &Orderstatus, nil
 }
 
+func (r *queryResolver) OrderByWorkspaceID(ctx context.Context, workspaceID string, fromDate string, toDate string) (*model.OrderByWorkspaceID, error) {
+	var Order model.OrderByWorkspaceID
+	err := services.OrderByWorkspaceId(&Order, workspaceID, fromDate, toDate)
+	ret := LogResponce("Order_by_Workspace_ID", 1, err)
+	if !ret {
+		return nil, err
+	}
+	return &Order, nil
+}
+
+func (r *queryResolver) OrderByOrderNumber(ctx context.Context, orderNumber string) (*model.Order, error) {
+	var Order model.Order
+	err := services.OrderByOrderNumber(&Order, orderNumber)
+	ret := LogResponce("Order_by_Order_Number", 1, err)
+	if !ret {
+		return nil, err
+	}
+	return &Order, nil
+}
+
 // Mutation returns generated.MutationResolver implementation.
 func (r *Resolver) Mutation() generated.MutationResolver { return &mutationResolver{r} }
 
