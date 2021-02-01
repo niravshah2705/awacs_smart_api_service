@@ -14,31 +14,6 @@ import (
 	"go.uber.org/zap"
 )
 
-var service = "awacs_search_api"
-
-//LogResponceEvent responce logger
-func LogResponceEvent(RequestType string, responceType string, rVal int, responceLen int) {
-	logger.Info("Responce", zap.String("service", service),
-		zap.String("type", RequestType),
-		zap.String("responceType", responceType),
-		zap.Int("status_code", rVal),
-		zap.Int("record_count", responceLen))
-
-}
-
-func LogResponce(RequestType string, resultLen int, err error) bool {
-	if err != nil {
-		LogResponceEvent(RequestType, "Error", 500, -1)
-		return false
-	}
-	if resultLen == 0 {
-		LogResponceEvent(RequestType, "NotFound", 400, 0)
-	} else {
-		LogResponceEvent(RequestType, "success", 200, resultLen)
-	}
-	return true
-}
-
 func (r *mutationResolver) CreateProduct(ctx context.Context, input model.NewProduct) (*model.Product, error) {
 	panic(fmt.Errorf("not implemented"))
 }
@@ -123,6 +98,20 @@ func (r *queryResolver) InvoiceByBuyer(ctx context.Context, buyerID string, from
 	return &Invoice, nil
 }
 
+func (r *queryResolver) OrdersummaryBySupplierID(ctx context.Context, supplierID string, fromDate string, toDate string) (*model.OrderSupplierStatus, error) {
+	var Orderstatus model.OrderSupplierStatus
+	err := services.OrderstatusBySupplierID(&Orderstatus, supplierID, fromDate, toDate)
+	LogResponce("Ordersummary_by_SuppierId", 1, err)
+	return &Orderstatus, nil
+}
+
+func (r *queryResolver) OrdersummaryByBuyerID(ctx context.Context, buyerID string, fromDate string, toDate string) (*model.OrderBuyerStatus, error) {
+	var Orderstatus model.OrderBuyerStatus
+	err := services.OrderstatusByBuyerID(&Orderstatus, buyerID, fromDate, toDate)
+	LogResponce("Ordersummary_by_BuyerId", 1, err)
+	return &Orderstatus, nil
+}
+
 // Mutation returns generated.MutationResolver implementation.
 func (r *Resolver) Mutation() generated.MutationResolver { return &mutationResolver{r} }
 
@@ -138,6 +127,34 @@ type queryResolver struct{ *Resolver }
 //  - When renaming or deleting a resolver the old code will be put in here. You can safely delete
 //    it when you're done.
 //  - You have helper methods in this file. Move them out to keep these resolver files clean.
+func (r *invoiceBuyerResolver) Buyer(ctx context.Context, obj *model.InvoiceBuyer) (*model.User, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
+type invoiceBuyerResolver struct{ *Resolver }
+
+var service = "awacs_search_api"
+
+func LogResponceEvent(RequestType string, responceType string, rVal int, responceLen int) {
+	logger.Info("Responce", zap.String("service", service),
+		zap.String("type", RequestType),
+		zap.String("responceType", responceType),
+		zap.Int("status_code", rVal),
+		zap.Int("record_count", responceLen))
+
+}
+func LogResponce(RequestType string, resultLen int, err error) bool {
+	if err != nil {
+		LogResponceEvent(RequestType, "Error", 500, -1)
+		return false
+	}
+	if resultLen == 0 {
+		LogResponceEvent(RequestType, "NotFound", 400, 0)
+	} else {
+		LogResponceEvent(RequestType, "success", 200, resultLen)
+	}
+	return true
+}
 func (r *invoiceResolver) Suppliers(ctx context.Context, obj *model.Invoice) (*model.User, error) {
 	panic(fmt.Errorf("not implemented"))
 }

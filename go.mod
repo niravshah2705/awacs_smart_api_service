@@ -7,5 +7,6 @@ require (
 	github.com/brkelkar/common_utils v1.0.0
 	github.com/gin-gonic/gin v1.6.3
 	github.com/vektah/gqlparser/v2 v2.1.0
+	go.uber.org/zap v1.16.0
 	gorm.io/gorm v1.20.11
 )

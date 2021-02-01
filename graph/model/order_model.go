@@ -46,7 +46,64 @@ type OrderDetails struct {
 	Pts              *float64 `json:"PTS"`
 }
 
+type OrderBuyerStatus struct {
+	Buyer       *User          `json:"buyer"`
+	OrderStatus []*OrderStatus `json:"orderStatus"`
+}
+
+type OrderSupplierStatus struct {
+	Supplier    *User          `json:"supplier"`
+	OrderStatus []*OrderStatus `json:"orderStatus"`
+}
+
+type OrderStatus struct {
+	OrderDate string `json:"orderDate"`
+	Billed    string `json:"billed"`
+	Bounced   string `json:"bounced"`
+	Pending   string `json:"pending"`
+}
+
+type OrderBuyerStatusDetails struct {
+	BuyerId   string `json:"buyerId"`
+	OrderDate string `json:"orderDate"`
+	Pending   string `json:"pending"`
+	Bounced   string `json:"bounced"`
+	Billed    string `json:"billed"`
+	BuyerName string `json:"buyerName"`
+	City      string `json:"City"`
+	Email     string `json:"Email"`
+	Mobile    string `json:"Mobile"`
+	PhoneNo   string `json:"PhoneNo"`
+	Pincode   string `json:"Pincode"`
+	State     string `json:"State"`
+}
+
+type OrderStatusSupplierDetails struct {
+	SupplierId string `json:"supplierID"`
+	OrderDate  string `json:"orderDate"`
+	Pending    string `json:"pending"`
+	Bounced    string `json:"bounced"`
+	Billed     string `json:"billed"`
+	SupplierName string `json:"supplierName"`
+	City      string `json:"city"`
+	Email     string `json:"email"`
+	Mobile    string `json:"mobile"`
+	PhoneNo   string `json:"phoneNo"`
+	Pincode   string `json:"pincode"`
+	State     string `json:"state"`
+}
+
 //TableName retunrs source table name
 func (OrderDetails) TableName() string {
 	return "dbo.V_ORDERS_BY_ORDER_NUMBER"
+}
+
+//TableName retunrs source table name
+func (OrderStatusSupplierDetails) TableName() string {
+	return "dbo.V_SUPPLIERID_WISE_ORDERSTATUS_COUNT"
+}
+
+//TableName retunrs source table name
+func (OrderBuyerStatusDetails) TableName() string {
+	return "dbo.V_BUYERID_WISE_ORDERSTATUS_COUNT"
 }

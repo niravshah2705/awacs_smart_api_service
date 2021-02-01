@@ -62,3 +62,77 @@ func OrderByUserId(Order *[]*model.Order, buyerID string) (err error) {
 	}
 	return nil
 }
+
+//OrderstatusByBuyerID get status count by buyer
+func OrderstatusByBuyerID(Orderstatus *model.OrderBuyerStatus, BuyerID string, fromDate string, toDate string) (err error) {
+	var Orderdetails []*model.OrderBuyerStatusDetails
+	err = db.DB["smartdb"].Where("BuyerId='" + BuyerID + "'and Orderdate between '" + fromDate + "' and '" + toDate + "' order by 2 desc").Find(&Orderdetails).Error
+	if err != nil {
+		log.Print(err)
+		return
+	}
+
+	flag:=1
+	for _, val := range Orderdetails {	
+		if flag==1{
+			var user model.User
+			user.Name=val.BuyerName
+			user.City=val.City
+			user.State=val.State
+			user.Email=val.Email
+			user.Mobile=val.Mobile
+			user.PhoneNo=val.PhoneNo
+			user.Pincode=&val.Pincode
+			user.Username=val.BuyerId
+
+			Orderstatus.Buyer=&user
+			flag=0
+		}
+		
+		var status model.OrderStatus
+		status.OrderDate = val.OrderDate
+		status.Pending = val.Pending
+		status.Billed = val.Billed
+		status.Bounced = val.Bounced
+		Orderstatus.OrderStatus = append(Orderstatus.OrderStatus, &status)		
+	}
+
+	return nil
+}
+
+//OrderstatusBySupplierID get status and count by supplierId
+func OrderstatusBySupplierID(Orderstatus *model.OrderSupplierStatus, SupplierID string, fromDate string, toDate string) (err error) {
+	var Orderdetails []*model.OrderStatusSupplierDetails
+	err = db.DB["smartdb"].Where("SupplierId='" + SupplierID + "'and Orderdate between '" + fromDate + "' and '" + toDate + "' order by 2 desc").Find(&Orderdetails).Error
+	if err != nil {
+		log.Print(err)
+		return
+	}
+
+	flag:=1
+	for _, val := range Orderdetails {	
+		if flag==1{
+			var user model.User
+			user.Name=val.SupplierName
+			user.City=val.City
+			user.State=val.State
+			user.Email=val.Email
+			user.Mobile=val.Mobile
+			user.PhoneNo=val.PhoneNo
+			user.Pincode=&val.Pincode
+			user.Username=val.SupplierId
+
+			Orderstatus.Supplier=&user
+			flag=0
+		}
+		
+		var status model.OrderStatus
+		status.OrderDate = val.OrderDate
+		status.Pending = val.Pending
+		status.Billed = val.Billed
+		status.Bounced = val.Bounced
+		Orderstatus.OrderStatus = append(Orderstatus.OrderStatus, &status)		
+	}
+
+	return nil
+}
