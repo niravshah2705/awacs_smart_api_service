@@ -36,13 +36,13 @@ func UserByUserName(User *model.User, username string) (err error) {
 }
 
 //BindUserDetails assign to user details
-func BindUserDetails(role string, objInterface interface{}) (objModel model.User) {
-	objReflact := reflect.ValueOf(objInterface)
-	objModel.Name = objReflact.FieldByName(role + "Name").String()
-	objModel.Email = objReflact.FieldByName(role + "Email").String()
-	objModel.City = objReflact.FieldByName(role + "City").String()
-	objModel.State = objReflact.FieldByName(role + "State").String()
-	objModel.Mobile = objReflact.FieldByName(role + "Mobile").String()
-	objModel.Pincode = objReflact.FieldByName(role + "Pincode").String()
+func BindUserDetails(role string, val interface{}) (user model.User) {
+	value := reflect.ValueOf(val)
+	user.Name = value.FieldByName(role + "Name").String()
+	user.Email = value.FieldByName(role + "Email").String()
+	user.City = value.FieldByName(role + "City").String()
+	user.State = value.FieldByName(role + "State").String()
+	user.Mobile = value.FieldByName(role + "Mobile").String()
+	user.Pincode = value.FieldByName(role + "Pincode").String()
 	return
 }

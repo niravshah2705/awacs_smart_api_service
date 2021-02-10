@@ -228,6 +228,18 @@ type SmartOrders{
 	RetailerOrders:[Order!]!
 }
 
+type BuyerDashboard{
+	SupplierId:String!
+	SupplierName:String!
+	Pending:String!
+	Bounced:String!
+	Billed:String!
+	Short:String!
+	TotalOrder:String!
+	CurrentOutstanding:String!
+	ProductCount:String!
+}
+
 type Query {
   products(productName: String!): [Product!]!
   productsAwacs(productName: String!): [AWACSProduct!]!
@@ -244,6 +256,7 @@ type Query {
   orderByOrderNumber(orderNumber: String!):Order!
   workspaceByWorkspaceId(workspace: String!):Workspaces!
   myOrders(userName:String!,fromDate:String!,toDate:String!):SmartOrders!
+  buyerDashboard(buyerName:String!,fromDate:String!,toDate:String!):[BuyerDashboard]!
 }
 
 input NewProduct {

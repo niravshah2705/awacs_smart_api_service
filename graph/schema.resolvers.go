@@ -144,14 +144,22 @@ func (r *queryResolver) WorkspaceByWorkspaceID(ctx context.Context, workspace st
 
 func (r *queryResolver) MyOrders(ctx context.Context, userName string, fromDate string, toDate string) (*model.SmartOrders, error) {
 	var Smartorder model.SmartOrders
-	err := services.MyOrders(&Smartorder, userName,fromDate,toDate)
+	err := services.MyOrders(&Smartorder, userName, fromDate, toDate)
 	ret := LogResponce("Workspace_by_workspaceId", 1, err)
 	if !ret {
 		return nil, err
 	}
 	return &Smartorder, nil
-	
-	
+}
+
+func (r *queryResolver) BuyerDashboard(ctx context.Context, buyerName string, fromDate string, toDate string) ([]*model.BuyerDashboard, error) {
+	var Ddashboard []*model.BuyerDashboard
+	err := services.BuyerDashboard(&Ddashboard, buyerName, fromDate, toDate)
+	ret := LogResponce("BuyerDashboard", len(Ddashboard), err)
+	if !ret {
+		return nil, err
+	}
+	return Ddashboard, nil
 }
 
 // Mutation returns generated.MutationResolver implementation.

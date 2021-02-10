@@ -8,5 +8,5 @@ require (
 	github.com/gin-gonic/gin v1.6.3
 	github.com/vektah/gqlparser/v2 v2.1.0
 	go.uber.org/zap v1.16.0
-	gorm.io/gorm v1.20.11
+	gorm.io/gorm v1.20.12
 )
