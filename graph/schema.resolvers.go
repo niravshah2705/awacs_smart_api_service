@@ -73,7 +73,7 @@ func (r *queryResolver) UserByMobile(ctx context.Context, mobile string) (*model
 
 func (r *queryResolver) OrderByUserID(ctx context.Context, buyerID string) ([]*model.Order, error) {
 	var Order []*model.Order
-	err := services.OrderByUserId(&Order, buyerID)
+	err := services.OrderByUserID(&Order, buyerID)
 	ret := LogResponce("Order_by_User_ID", len(Order), err)
 	if !ret {
 		return nil, err
@@ -114,7 +114,7 @@ func (r *queryResolver) OrdersummaryByBuyerID(ctx context.Context, buyerID strin
 
 func (r *queryResolver) OrderByWorkspaceID(ctx context.Context, workspaceID string, fromDate string, toDate string) (*model.OrderByWorkspaceID, error) {
 	var Order model.OrderByWorkspaceID
-	err := services.OrderByWorkspaceId(&Order, workspaceID, fromDate, toDate)
+	err := services.OrderByWorkspaceID(&Order, workspaceID, fromDate, toDate)
 	ret := LogResponce("Order_by_Workspace_ID", 1, err)
 	if !ret {
 		return nil, err
@@ -130,6 +130,28 @@ func (r *queryResolver) OrderByOrderNumber(ctx context.Context, orderNumber stri
 		return nil, err
 	}
 	return &Order, nil
+}
+
+func (r *queryResolver) WorkspaceByWorkspaceID(ctx context.Context, workspace string) (*model.Workspaces, error) {
+	var Workspace model.Workspaces
+	err := services.GetWorksapceDetails(&Workspace, workspace)
+	ret := LogResponce("Workspace_by_workspaceId", 1, err)
+	if !ret {
+		return nil, err
+	}
+	return &Workspace, nil
+}
+
+func (r *queryResolver) MyOrders(ctx context.Context, userName string, fromDate string, toDate string) (*model.SmartOrders, error) {
+	var Smartorder model.SmartOrders
+	err := services.MyOrders(&Smartorder, userName,fromDate,toDate)
+	ret := LogResponce("Workspace_by_workspaceId", 1, err)
+	if !ret {
+		return nil, err
+	}
+	return &Smartorder, nil
+	
+	
 }
 
 // Mutation returns generated.MutationResolver implementation.

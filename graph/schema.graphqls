@@ -7,50 +7,50 @@ type Product {
   productName: String!
   company:String!
   quantity:Float!
-  freeQuantity:Float
-  schemePercentage:Float
-  closing:Float
-  drugType: String
-  strength:String
+  freeQuantity:Float!
+  schemePercentage:Float!
+  closing:Float!
+  drugType: String!
+  strength:String!
   pack:String!
   mrp:Float!
-  ptr:Float
-  pts:Float
-  batchId: String
-  hsn: String
-  TaxableAmount: Float
-  	remarks: String
- 	batch: String
-	expiry: String
-	rate: Float
-	amount: Float
-	discount: Float
-	discountAmount: Float
-	addlScheme: Float
-	addlSchemeAmount: Float
-	addlDiscount: Float
-	addlDiscountAmount: Float
-	deductableBeforeDiscount: Float
-	mrpInclusiveTax: Boolean
-	vatApplication: String
-	vat: Float
-	addlTax: Float
-	cst: Float
-	sGST: Float
-	cGST: Float
-	iGST: Float
-	orderNumber: String
-	orderDate: String
-	barcode: String
-	orderSource: String  
-	baseSchemeQuantity: Float
-	baseSchemeFreeQuantity: Float
-	sgstAmount: Float
-	cgstAmount: Float
-	igstAmount: Float
-	cess: Float
-	cessAmount: Float
-  distributors:[User!]
+  ptr:Float!
+  pts:Float!
+  batchId: String!
+  hsn: String!
+  TaxableAmount: Float!
+  	remarks: String!
+ 	batch: String!
+	expiry: String!
+	rate: Float!
+	amount: Float!
+	discount: Float!
+	discountAmount: Float!
+	addlScheme: Float!
+	addlSchemeAmount: Float!
+	addlDiscount: Float!
+	addlDiscountAmount: Float!
+	deductableBeforeDiscount: Float!
+	mrpInclusiveTax: Boolean!
+	vatApplication: String!
+	vat: Float!
+	addlTax: Float!
+	cst: Float!
+	sGST: Float!
+	cGST: Float!
+	iGST: Float!
+	orderNumber: String!
+	orderDate: String!
+	barcode: String!
+	orderSource: String!
+	baseSchemeQuantity: Float!
+	baseSchemeFreeQuantity: Float!
+	sgstAmount: Float!
+	cgstAmount: Float!
+	igstAmount: Float!
+	cess: Float!
+	cessAmount: Float!
+  distributors:[User!]!
 }
 
 type AWACSProduct {
@@ -58,25 +58,25 @@ type AWACSProduct {
   productName: String!
   brand: String!
   company:String!
-  drugType: String
-  strength:String
+  drugType: String!
+  strength:String!
   pack:String!
   mrp:Float!
-  ptr:Float
-  pts:Float
+  ptr:Float!
+  pts:Float!
 }
 
 type User {
 id: ID!
-changePasswordOnLogon: Boolean
-pictureId: Int
+changePasswordOnLogon: Boolean!
+pictureId: Int!
 workspaceId: Int!
 username: String!
 role: String!
 name: String!
 address1: String!
-address2: String
-address3: String
+address2: String!
+address3: String!
 cityId: Int!
 city: String!
 state: String!
@@ -85,85 +85,85 @@ country: String!
 phoneNo: String!
 mobile: String!
 email: String!
-isLiveorderBlocked: Boolean
-isVerify: Boolean
-isAdmin: Boolean
-isAdminDelegate: String
-isAdhoc: String
-deviceId: String
-gCMRegisterKey: String
-type: String
+isLiveorderBlocked: Boolean!
+isVerify: Boolean!
+isAdmin: Boolean!
+isAdminDelegate: String!
+isAdhoc: String!
+deviceId: String!
+gCMRegisterKey: String!
+type: String!
 loginType: String!
-providerId: Int
-providerType: String
-awacsId: String
-pOBOTP: String
-gSTIN: String
-pincode: String
-registrationId: String
-source: String
-sourceType: String
-signSource: String
-signDetail: String
-deleted: String
-deletedBy: Int
-deletedOn: String
-lastActivity: String
-appVersion: String
-oSVersion: String
-platform: String
-userKind: String
-bank: String
-iFSCCode: String
+providerId: Int!
+providerType: String!
+awacsId: String!
+pOBOTP: String!
+gSTIN: String!
+pincode: String!
+registrationId: String!
+source: String!
+sourceType: String!
+signSource: String!
+signDetail: String!
+deleted: String!
+deletedBy: Int!
+deletedOn: String!
+lastActivity: String!
+appVersion: String!
+oSVersion: String!
+platform: String!
+userKind: String!
+bank: String!
+iFSCCode: String!
 userId: String!
 }
 
 type OrderByWorkspaceId{
-	buyer:User
-	supplier:User
+	buyer:User!
+	supplier:User!
 	Order:[Order!]!
 }
 
 type Order {
   	id:ID!
-	source:String
-	buyerId:String
+	source:String!
+	buyerId:String!
 	orderNumber:String!
-	orderDate:String
+	orderDate:String!
 	supplierId:String!
-	takenOn: String
-	deliveryOption: String
-	deliveryMode:String
-	remarks:String
-	workspaceId:Int
-	status:String
-	invoiceNumber:String
-	isBounced:Boolean
+	takenOn: String!
+	deliveryOption: String!
+	deliveryMode:String!
+	remarks:String!
+	workspaceId:Int!
+	status:String!
+	invoiceNumber:String!
+	isBounced:Boolean!
  	products:[Product!]!
-	buyer:User
-	supplier:User
+	buyer:User!
+	supplier:User!
 }
 
 type Invoice {
 	id: ID!
-	developerId: String
+	developerId: String!
 	supplierId: String!
 	billNumber: String!
 	billDate: String!
-	challanNumber: String
-	challanDate: String
+	challanNumber: String!
+	challanDate: String!
 	buyerId: String!
-	reason: String
-	upc: String
-	paymentDueDate: String
-	netInvoiceAmount: Float
-	netPurchaseAmount: Float
-	lastTransactionDate: String
-	receivedOn: String
-	emailPrepared: Boolean
-	emailbillNumberTakenDate: String
-	ede2_TakenBatchID: String
-	taxableAmount: Float
+	reason: String!
+	upc: String!
+	paymentDueDate: String!
+	netInvoiceAmount: Float!
+	netPurchaseAmount: Float!
+	lastTransactionDate: String!
+	receivedOn: String!
+	emailPrepared: Boolean!
+	emailbillNumberTakenDate: String!
+	ede2_TakenBatchID: String!
+	taxableAmount: Float!
     products:[Product!]!
 	suppliers:User!
 	buyers:User!
@@ -191,6 +191,43 @@ type OrderStatus{
 	pending:String!
 }
 
+type Workspaces{
+	Id:String!
+	Name:String!
+	Address1:String!
+	ddress2:String!
+	Address3:String!
+	Country:String!
+	State:String!
+	City:String!
+	Email:String!
+	Pincode:String!
+	PhoneNo:String!
+	Mobile:String!
+	WorkSpace:String!
+	OrderToEmail:String!
+	InvoiceToEmail:String!
+	LiveorderStartFrom:String!
+	LiveorderExpireOn:String!
+	InfoserverValidUpTo:String!
+	HasAdvt:String!
+	IsLiveorderBlocked:String!
+	LiveorderCount:String!
+	LastIpAddress:String!
+	Password:String!
+	PictureID:String!
+	ProviderId:String!
+	ProviderType:String!
+	Remarks:String!
+	TimeZoneId:String!
+}
+
+type SmartOrders{
+	Retailer:User!
+	AggregatorOrders:[Order!]!
+	RetailerOrders:[Order!]!
+}
+
 type Query {
   products(productName: String!): [Product!]!
   productsAwacs(productName: String!): [AWACSProduct!]!
@@ -205,6 +242,8 @@ type Query {
   ordersummaryByBuyerId(buyerId:String!,fromDate:String!,toDate:String!):OrderBuyerStatus!
   orderByWorkspaceId(workspaceId: String!,fromDate:String!,toDate:String!):OrderByWorkspaceId!
   orderByOrderNumber(orderNumber: String!):Order!
+  workspaceByWorkspaceId(workspace: String!):Workspaces!
+  myOrders(userName:String!,fromDate:String!,toDate:String!):SmartOrders!
 }
 
 input NewProduct {
@@ -213,5 +252,4 @@ input NewProduct {
 
 type Mutation {
   createProduct(input: NewProduct!): Product!
-
 }

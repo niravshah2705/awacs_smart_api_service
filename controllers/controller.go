@@ -18,7 +18,7 @@ func logUA(ua string) {
 
 }
 
-// Defining the Graphql handler
+//GraphqlHandler Defining the Graphql handler
 func GraphqlHandler() gin.HandlerFunc {
 	// NewExecutableSchema and Config are in the generated.go file
 	// Resolver is in the resolver.go file
@@ -31,7 +31,7 @@ func GraphqlHandler() gin.HandlerFunc {
 	}
 }
 
-// Defining the Playground handler
+//PlaygroundHandler Defining the Playground handler
 func PlaygroundHandler() gin.HandlerFunc {
 	h := playground.Handler("GraphQL", "/query")
 
