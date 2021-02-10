@@ -231,13 +231,13 @@ type SmartOrders{
 type BuyerDashboard{
 	SupplierId:String!
 	SupplierName:String!
-	Pending:String!
-	Bounced:String!
-	Billed:String!
-	Short:String!
-	TotalOrder:String!
-	CurrentOutstanding:String!
-	ProductCount:String!
+	Pending:Int!
+	Bounced:Int!
+	Billed:Int!
+	Short:Int!
+	TotalOrder:Int!
+	CurrentOutstanding:Float!
+	ProductCount:Int!
 }
 
 type Query {

@@ -2236,13 +2236,13 @@ type SmartOrders{
 type BuyerDashboard{
 	SupplierId:String!
 	SupplierName:String!
-	Pending:String!
-	Bounced:String!
-	Billed:String!
-	Short:String!
-	TotalOrder:String!
-	CurrentOutstanding:String!
-	ProductCount:String!
+	Pending:Int!
+	Bounced:Int!
+	Billed:Int!
+	Short:Int!
+	TotalOrder:Int!
+	CurrentOutstanding:Float!
+	ProductCount:Int!
 }
 
 type Query {
@@ -3171,9 +3171,9 @@ func (ec *executionContext) _BuyerDashboard_Pending(ctx context.Context, field g
 		}
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(int)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _BuyerDashboard_Bounced(ctx context.Context, field graphql.CollectedField, obj *model.BuyerDashboard) (ret graphql.Marshaler) {
@@ -3206,9 +3206,9 @@ func (ec *executionContext) _BuyerDashboard_Bounced(ctx context.Context, field g
 		}
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(int)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _BuyerDashboard_Billed(ctx context.Context, field graphql.CollectedField, obj *model.BuyerDashboard) (ret graphql.Marshaler) {
@@ -3241,9 +3241,9 @@ func (ec *executionContext) _BuyerDashboard_Billed(ctx context.Context, field gr
 		}
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(int)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _BuyerDashboard_Short(ctx context.Context, field graphql.CollectedField, obj *model.BuyerDashboard) (ret graphql.Marshaler) {
@@ -3276,9 +3276,9 @@ func (ec *executionContext) _BuyerDashboard_Short(ctx context.Context, field gra
 		}
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(int)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _BuyerDashboard_TotalOrder(ctx context.Context, field graphql.CollectedField, obj *model.BuyerDashboard) (ret graphql.Marshaler) {
@@ -3311,9 +3311,9 @@ func (ec *executionContext) _BuyerDashboard_TotalOrder(ctx context.Context, fiel
 		}
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(int)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _BuyerDashboard_CurrentOutstanding(ctx context.Context, field graphql.CollectedField, obj *model.BuyerDashboard) (ret graphql.Marshaler) {
@@ -3346,9 +3346,9 @@ func (ec *executionContext) _BuyerDashboard_CurrentOutstanding(ctx context.Conte
 		}
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(float64)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalNFloat2float64(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _BuyerDashboard_ProductCount(ctx context.Context, field graphql.CollectedField, obj *model.BuyerDashboard) (ret graphql.Marshaler) {
@@ -3381,9 +3381,9 @@ func (ec *executionContext) _BuyerDashboard_ProductCount(ctx context.Context, fi
 		}
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(int)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Invoice_id(ctx context.Context, field graphql.CollectedField, obj *model.Invoice) (ret graphql.Marshaler) {

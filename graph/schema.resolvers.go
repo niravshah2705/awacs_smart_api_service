@@ -177,6 +177,31 @@ type queryResolver struct{ *Resolver }
 //  - When renaming or deleting a resolver the old code will be put in here. You can safely delete
 //    it when you're done.
 //  - You have helper methods in this file. Move them out to keep these resolver files clean.
+func (r *buyerDashboardResolver) Pending(ctx context.Context, obj *model.BuyerDashboard) (int, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+func (r *buyerDashboardResolver) Bounced(ctx context.Context, obj *model.BuyerDashboard) (int, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+func (r *buyerDashboardResolver) Billed(ctx context.Context, obj *model.BuyerDashboard) (int, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+func (r *buyerDashboardResolver) Short(ctx context.Context, obj *model.BuyerDashboard) (int, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+func (r *buyerDashboardResolver) TotalOrder(ctx context.Context, obj *model.BuyerDashboard) (int, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+func (r *buyerDashboardResolver) CurrentOutstanding(ctx context.Context, obj *model.BuyerDashboard) (float64, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+func (r *buyerDashboardResolver) ProductCount(ctx context.Context, obj *model.BuyerDashboard) (int, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
+
+type buyerDashboardResolver struct{ *Resolver }
+
 func (r *invoiceBuyerResolver) Buyer(ctx context.Context, obj *model.InvoiceBuyer) (*model.User, error) {
 	panic(fmt.Errorf("not implemented"))
 }

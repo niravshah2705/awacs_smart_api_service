@@ -13,5 +13,19 @@ func BuyerDashboard(Buyerdashboard *[]*model.BuyerDashboard, buyerID string, fro
 	if err != nil {
 		logger.Error("Buyer Dashboard: ", err)
 	}
+	var dummySupper model.BuyerDashboard
+	dummySupper.SupplierID = "Total"
+	dummySupper.SupplierName = "Total"
+
+	for _, val := range *Buyerdashboard {
+		dummySupper.Billed = dummySupper.Billed + val.Billed
+		dummySupper.Pending = dummySupper.Pending + val.Pending
+		dummySupper.Bounced = dummySupper.Bounced + val.Bounced
+		dummySupper.Short = dummySupper.Short + val.Short
+		dummySupper.CurrentOutstanding = dummySupper.CurrentOutstanding + val.CurrentOutstanding
+		dummySupper.ProductCount = dummySupper.ProductCount + val.ProductCount
+
+	}
+	*Buyerdashboard = append(*Buyerdashboard, &dummySupper)
 	return
 }
