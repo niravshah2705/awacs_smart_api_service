@@ -228,7 +228,7 @@ type SmartOrders{
 	RetailerOrders:[Order!]!
 }
 
-type BuyerDashboard{
+type SupperOrderDeatils{
 	SupplierId:String!
 	SupplierName:String!
 	Pending:Int!
@@ -238,7 +238,20 @@ type BuyerDashboard{
 	TotalOrder:Int!
 	CurrentOutstanding:Float!
 	ProductCount:Int!
+	
 }
+
+type BuyerDashboard{
+	TotalOrders:Int! 
+	TotalPendingOrders:Int!
+	TotalBilledOrders:Int!
+	TotalShortOrders:Int!
+	TotalBounceOrders:Int!
+	TotalOutstanding:Float!
+	TotalProductOrdered:Int!
+	Supper:[SupperOrderDeatils!]!
+}
+
 
 type Query {
   products(productName: String!): [Product!]!
@@ -256,7 +269,7 @@ type Query {
   orderByOrderNumber(orderNumber: String!):Order!
   workspaceByWorkspaceId(workspace: String!):Workspaces!
   myOrders(userName:String!,fromDate:String!,toDate:String!):SmartOrders!
-  buyerDashboard(buyerName:String!,fromDate:String!,toDate:String!):[BuyerDashboard]!
+  buyerDashboard(buyerName:String!,fromDate:String!,toDate:String!):BuyerDashboard!
 }
 
 input NewProduct {
