@@ -22,7 +22,7 @@ func BuyerDashboard(Buyerdashboard *model.BuyerDashboard, buyerID string, fromDa
 		Buyerdashboard.TotalShortOrders = Buyerdashboard.TotalShortOrders + val.Short
 		Buyerdashboard.TotalOutstanding = Buyerdashboard.TotalOutstanding + val.CurrentOutstanding
 		Buyerdashboard.TotalProductOrdered = Buyerdashboard.TotalProductOrdered + val.ProductCount
-
+		Buyerdashboard.TotalOrders = Buyerdashboard.TotalOrders + val.TotalOrder
 	}
 	Buyerdashboard.Supper = supplier
 	return
