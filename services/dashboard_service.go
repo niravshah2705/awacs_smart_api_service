@@ -1,16 +1,16 @@
 package services
 
 import (
+	"awacs_smart_api_service/dal"
 	"awacs_smart_api_service/graph/model"
 
-	db "github.com/brkelkar/common_utils/databases"
 	"github.com/brkelkar/common_utils/logger"
 )
 
 //BuyerDashboard get order details for dashboard
 func BuyerDashboard(Buyerdashboard *model.BuyerDashboard, buyerID string, fromDate string, toDate string) (err error) {
 	var supplier []*model.SupperOrderDeatils
-	err = db.DB["smartdb"].Raw("exec SP_DASHBOARD_ORDERSTATUS  ?, ?, ?", buyerID, fromDate, toDate).Scan(&supplier).Error
+	err = dal.BuyerDashboard(&supplier, buyerID, fromDate, toDate)
 	if err != nil {
 		logger.Error("Buyer Dashboard: ", err)
 	}

@@ -116,6 +116,7 @@ userKind: String!
 bank: String!
 iFSCCode: String!
 userId: String!
+orders:[Order!]!
 }
 
 type OrderByWorkspaceId{
@@ -223,9 +224,8 @@ type Workspaces{
 }
 
 type SmartOrders{
-	Retailer:User!
-	AggregatorOrders:[Order!]!
-	RetailerOrders:[Order!]!
+	AggregatorOrders:[User!]!
+	RetailerOrders:[User!]!
 }
 
 type SupperOrderDeatils{
@@ -237,8 +237,7 @@ type SupperOrderDeatils{
 	Short:Int!
 	TotalOrder:Int!
 	CurrentOutstanding:Float!
-	ProductCount:Int!
-	
+	ProductCount:Int!	
 }
 
 type BuyerDashboard{

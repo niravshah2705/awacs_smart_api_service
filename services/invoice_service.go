@@ -1,21 +1,20 @@
 package services
 
 import (
+	"awacs_smart_api_service/dal"
 	"awacs_smart_api_service/graph/model"
 	"reflect"
 
 	"github.com/brkelkar/common_utils/logger"
-
-	db "github.com/brkelkar/common_utils/databases"
 )
 
 //InvoiceDetails get invoice details
 func InvoiceDetails(Invoice *[]*model.Invoice, buyerID string, supplierID string, fromDate string, toDate string) (err error) {
 	var InvoiceDetails []*model.InvoiceDetails
 	clouse := " SupplierID='" + supplierID + "' and BuyerID='" + buyerID + "' and BillDate between '" + fromDate + "' and '" + toDate + "'"
-	err = db.DB["smartdb"].Where(clouse).Find(&InvoiceDetails).Error
+	err = dal.InvoiceDetails(&InvoiceDetails, clouse)
 	if err != nil {
-		logger.Error("Invoice details: ",err)
+		logger.Error("Invoice details: ", err)
 		return
 	}
 	InvoiceMap := make(map[string]model.Invoice, len(InvoiceDetails)+1)
@@ -58,9 +57,9 @@ func InvoiceDetails(Invoice *[]*model.Invoice, buyerID string, supplierID string
 func InvoiceByBuyer(InvoiceBuyer *model.InvoiceBuyer, buyerID string, fromDate string, toDate string) (err error) {
 	var InvoiceDetails []*model.InvoiceDetails
 	clouse := "  BuyerID='" + buyerID + "' and BillDate between '" + fromDate + "' and '" + toDate + "'"
-	err = db.DB["smartdb"].Where(clouse).Find(&InvoiceDetails).Error
+	err = dal.InvoiceDetails(&InvoiceDetails, clouse)
 	if err != nil {
-		logger.Error("Invoice details by buyer: ",err)
+		logger.Error("Invoice details by buyer: ", err)
 		return
 	}
 	iMap := make(map[string]model.Invoice, len(InvoiceDetails))

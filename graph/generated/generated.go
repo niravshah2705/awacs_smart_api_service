@@ -216,7 +216,6 @@ type ComplexityRoot struct {
 
 	SmartOrders struct {
 		AggregatorOrders func(childComplexity int) int
-		Retailer         func(childComplexity int) int
 		RetailerOrders   func(childComplexity int) int
 	}
 
@@ -262,6 +261,7 @@ type ComplexityRoot struct {
 		Mobile                func(childComplexity int) int
 		Name                  func(childComplexity int) int
 		OSVersion             func(childComplexity int) int
+		Orders                func(childComplexity int) int
 		PObotp                func(childComplexity int) int
 		PhoneNo               func(childComplexity int) int
 		PictureID             func(childComplexity int) int
@@ -1390,13 +1390,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.SmartOrders.AggregatorOrders(childComplexity), true
 
-	case "SmartOrders.Retailer":
-		if e.complexity.SmartOrders.Retailer == nil {
-			break
-		}
-
-		return e.complexity.SmartOrders.Retailer(childComplexity), true
-
 	case "SmartOrders.RetailerOrders":
 		if e.complexity.SmartOrders.RetailerOrders == nil {
 			break
@@ -1669,6 +1662,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.User.OSVersion(childComplexity), true
+
+	case "User.orders":
+		if e.complexity.User.Orders == nil {
+			break
+		}
+
+		return e.complexity.User.Orders(childComplexity), true
 
 	case "User.pOBOTP":
 		if e.complexity.User.PObotp == nil {
@@ -2188,6 +2188,7 @@ userKind: String!
 bank: String!
 iFSCCode: String!
 userId: String!
+orders:[Order!]!
 }
 
 type OrderByWorkspaceId{
@@ -2295,9 +2296,8 @@ type Workspaces{
 }
 
 type SmartOrders{
-	Retailer:User!
-	AggregatorOrders:[Order!]!
-	RetailerOrders:[Order!]!
+	AggregatorOrders:[User!]!
+	RetailerOrders:[User!]!
 }
 
 type SupperOrderDeatils{
@@ -2309,8 +2309,7 @@ type SupperOrderDeatils{
 	Short:Int!
 	TotalOrder:Int!
 	CurrentOutstanding:Float!
-	ProductCount:Int!
-	
+	ProductCount:Int!	
 }
 
 type BuyerDashboard{
@@ -7716,41 +7715,6 @@ func (ec *executionContext) _Query___schema(ctx context.Context, field graphql.C
 	return ec.marshalO__Schema2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐSchema(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _SmartOrders_Retailer(ctx context.Context, field graphql.CollectedField, obj *model.SmartOrders) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "SmartOrders",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Retailer, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*model.User)
-	fc.Result = res
-	return ec.marshalNUser2ᚖawacs_smart_api_serviceᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
-}
-
 func (ec *executionContext) _SmartOrders_AggregatorOrders(ctx context.Context, field graphql.CollectedField, obj *model.SmartOrders) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -7781,9 +7745,9 @@ func (ec *executionContext) _SmartOrders_AggregatorOrders(ctx context.Context, f
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*model.Order)
+	res := resTmp.([]*model.User)
 	fc.Result = res
-	return ec.marshalNOrder2ᚕᚖawacs_smart_api_serviceᚋgraphᚋmodelᚐOrderᚄ(ctx, field.Selections, res)
+	return ec.marshalNUser2ᚕᚖawacs_smart_api_serviceᚋgraphᚋmodelᚐUserᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _SmartOrders_RetailerOrders(ctx context.Context, field graphql.CollectedField, obj *model.SmartOrders) (ret graphql.Marshaler) {
@@ -7816,9 +7780,9 @@ func (ec *executionContext) _SmartOrders_RetailerOrders(ctx context.Context, fie
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*model.Order)
+	res := resTmp.([]*model.User)
 	fc.Result = res
-	return ec.marshalNOrder2ᚕᚖawacs_smart_api_serviceᚋgraphᚋmodelᚐOrderᚄ(ctx, field.Selections, res)
+	return ec.marshalNUser2ᚕᚖawacs_smart_api_serviceᚋgraphᚋmodelᚐUserᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _SupperOrderDeatils_SupplierId(ctx context.Context, field graphql.CollectedField, obj *model.SupperOrderDeatils) (ret graphql.Marshaler) {
@@ -9849,6 +9813,41 @@ func (ec *executionContext) _User_userId(ctx context.Context, field graphql.Coll
 	res := resTmp.(string)
 	fc.Result = res
 	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _User_orders(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Orders, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.Order)
+	fc.Result = res
+	return ec.marshalNOrder2ᚕᚖawacs_smart_api_serviceᚋgraphᚋmodelᚐOrderᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Workspaces_Id(ctx context.Context, field graphql.CollectedField, obj *model.Workspaces) (ret graphql.Marshaler) {
@@ -13052,11 +13051,6 @@ func (ec *executionContext) _SmartOrders(ctx context.Context, sel ast.SelectionS
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("SmartOrders")
-		case "Retailer":
-			out.Values[i] = ec._SmartOrders_Retailer(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
 		case "AggregatorOrders":
 			out.Values[i] = ec._SmartOrders_AggregatorOrders(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -13398,6 +13392,11 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			}
 		case "userId":
 			out.Values[i] = ec._User_userId(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "orders":
+			out.Values[i] = ec._User_orders(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}

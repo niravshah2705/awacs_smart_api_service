@@ -1,10 +1,10 @@
 package services
 
 import (
+	"awacs_smart_api_service/dal"
 	"awacs_smart_api_service/graph/model"
 	"reflect"
 
-	db "github.com/brkelkar/common_utils/databases"
 	"github.com/brkelkar/common_utils/logger"
 )
 
@@ -24,12 +24,11 @@ var (
 //Products get product details
 func Products(Product *[]*model.Product, productName string) (err error) {
 	var P []*model.ProductDetails
-	err = db.DB["smartdb"].Limit(1000).Where("ProductName like '" + productName + "%'").Order("ProductName").Find(&P).Error
-
+	clause := "ProductName like '" + productName + "%'"
+	err = dal.Products(&P, clause)
 	if err != nil {
 		logger.Error("Product details: ", err)
 		return
-
 	}
 	productMap := make(map[string]model.Product, len(P)+1)
 	for _, val := range P {
@@ -56,9 +55,8 @@ func Products(Product *[]*model.Product, productName string) (err error) {
 
 //ProductsAwacs product awacs
 func ProductsAwacs(AwacsProduct *[]*model.AWACSProduct, productName string) (err error) {
-	err = db.DB["awacs"].Limit(5000).Select(productQuery).Where(
-		"STATUS='Active' and SKU LIKE '" + productName + "%'").Find(
-		AwacsProduct).Error
+	clause := "STATUS='Active' and SKU LIKE '" + productName + "%'"
+	err = dal.ProductsAwacs(AwacsProduct, productQuery, clause)
 	if err != nil {
 		logger.Error("Product Awacs details: ", err)
 	}
@@ -68,8 +66,8 @@ func ProductsAwacs(AwacsProduct *[]*model.AWACSProduct, productName string) (err
 
 //ProductByItemCode get product details item code
 func ProductByItemCode(Product *[]*model.AWACSProduct, itemCode string) (err error) {
-	err = db.DB["awacs"].Select(productQuery).Where(
-		"STATUS='Active' and ItemCode=" + itemCode).Find(Product).Error
+	clause := "STATUS='Active' and ItemCode=" + itemCode
+	err = dal.ProductsAwacs(Product, productQuery, clause)
 	if err != nil {
 		logger.Error("Product details by itemcode: ", err)
 	}
