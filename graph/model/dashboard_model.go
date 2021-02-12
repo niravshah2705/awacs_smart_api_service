@@ -9,6 +9,7 @@ type BuyerDashboard struct {
 	TotalOutstanding    float64               `json:"TotalOutstanding"`
 	TotalProductOrdered int                   `json:"TotalProductOrdered"`
 	Supper              []*SupperOrderDeatils `json:"Supper"`
+	Buyer               *User                 `json:"Buyer"`
 }
 
 type SupperOrderDeatils struct {
@@ -21,4 +22,11 @@ type SupperOrderDeatils struct {
 	TotalOrder         int     `json:"TotalOrder"`
 	CurrentOutstanding float64 `json:"CurrentOutstanding"`
 	ProductCount       int     `json:"ProductCount"`
+	BuyerName          string  `json:"buyerName"`
+	BuyerEmail         string  `json:"buyerEmail"`
+	BuyerMobile        string  `json:"buyerMobile"`
+	BuyerPincode       string  `json:"buyerPincode"`
+	BuyerCity          string  `json:"buyerCity"`
+	BuyerState         string  `json:"buyerState"`
+	BuyerAddress1      string  `json:"buyerAddress1"`
 }

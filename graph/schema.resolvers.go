@@ -177,6 +177,13 @@ type queryResolver struct{ *Resolver }
 //  - When renaming or deleting a resolver the old code will be put in here. You can safely delete
 //    it when you're done.
 //  - You have helper methods in this file. Move them out to keep these resolver files clean.
+func (r *buyerDashboardResolver) Buyer(ctx context.Context, obj *model.BuyerDashboard) (*model.User, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
+
+type buyerDashboardResolver struct{ *Resolver }
+
 func (r *buyerDashboardResolver) TotalOrders(ctx context.Context, obj *model.BuyerDashboard) (int, error) {
 	panic(fmt.Errorf("not implemented"))
 }
@@ -201,9 +208,6 @@ func (r *buyerDashboardResolver) TotalProductOrdered(ctx context.Context, obj *m
 func (r *buyerDashboardResolver) Supper(ctx context.Context, obj *model.BuyerDashboard) ([]*model.SupperOrderDeatils, error) {
 	panic(fmt.Errorf("not implemented"))
 }
-
-type buyerDashboardResolver struct{ *Resolver }
-
 func (r *buyerDashboardResolver) Pending(ctx context.Context, obj *model.BuyerDashboard) (int, error) {
 	panic(fmt.Errorf("not implemented"))
 }

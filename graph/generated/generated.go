@@ -57,6 +57,7 @@ type ComplexityRoot struct {
 	}
 
 	BuyerDashboard struct {
+		Buyer               func(childComplexity int) int
 		Supper              func(childComplexity int) int
 		TotalBilledOrders   func(childComplexity int) int
 		TotalBounceOrders   func(childComplexity int) int
@@ -422,6 +423,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.AWACSProduct.Strength(childComplexity), true
+
+	case "BuyerDashboard.Buyer":
+		if e.complexity.BuyerDashboard.Buyer == nil {
+			break
+		}
+
+		return e.complexity.BuyerDashboard.Buyer(childComplexity), true
 
 	case "BuyerDashboard.Supper":
 		if e.complexity.BuyerDashboard.Supper == nil {
@@ -2321,6 +2329,7 @@ type BuyerDashboard{
 	TotalOutstanding:Float!
 	TotalProductOrdered:Int!
 	Supper:[SupperOrderDeatils!]!
+	Buyer:User!
 }
 
 
@@ -3428,6 +3437,41 @@ func (ec *executionContext) _BuyerDashboard_Supper(ctx context.Context, field gr
 	res := resTmp.([]*model.SupperOrderDeatils)
 	fc.Result = res
 	return ec.marshalNSupperOrderDeatils2ᚕᚖawacs_smart_api_serviceᚋgraphᚋmodelᚐSupperOrderDeatilsᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _BuyerDashboard_Buyer(ctx context.Context, field graphql.CollectedField, obj *model.BuyerDashboard) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "BuyerDashboard",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Buyer, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.User)
+	fc.Result = res
+	return ec.marshalNUser2ᚖawacs_smart_api_serviceᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Invoice_id(ctx context.Context, field graphql.CollectedField, obj *model.Invoice) (ret graphql.Marshaler) {
@@ -12065,6 +12109,11 @@ func (ec *executionContext) _BuyerDashboard(ctx context.Context, sel ast.Selecti
 			}
 		case "Supper":
 			out.Values[i] = ec._BuyerDashboard_Supper(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "Buyer":
+			out.Values[i] = ec._BuyerDashboard_Buyer(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}

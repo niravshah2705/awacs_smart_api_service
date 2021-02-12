@@ -15,6 +15,9 @@ func BuyerDashboard(Buyerdashboard *model.BuyerDashboard, buyerID string, fromDa
 		logger.Error("Buyer Dashboard: ", err)
 	}
 
+	buyer := BindUserDetails("Buyer", *supplier[0])
+	Buyerdashboard.Buyer = &buyer
+	
 	for _, val := range supplier {
 		Buyerdashboard.TotalBilledOrders = Buyerdashboard.TotalBilledOrders + val.Billed
 		Buyerdashboard.TotalPendingOrders = Buyerdashboard.TotalPendingOrders + val.Pending

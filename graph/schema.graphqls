@@ -249,6 +249,7 @@ type BuyerDashboard{
 	TotalOutstanding:Float!
 	TotalProductOrdered:Int!
 	Supper:[SupperOrderDeatils!]!
+	Buyer:User!
 }
 
 

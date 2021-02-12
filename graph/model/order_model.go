@@ -54,12 +54,14 @@ type OrderDetails struct {
 	SupplierPincode  string  `json:"supplierPincode"`
 	SupplierCity     string  `json:"supplierCity"`
 	SupplierState    string  `json:"supplierState"`
+	SupplierAddress1 string  `json:"supplierAddress1"`
 	BuyerName        string  `json:"buyerName"`
 	BuyerEmail       string  `json:"buyerEmail"`
 	BuyerMobile      string  `json:"buyerMobile"`
 	BuyerPincode     string  `json:"buyerPincode"`
 	BuyerCity        string  `json:"buyerCity"`
 	BuyerState       string  `json:"buyerState"`
+	BuyerAddress1    string  `json:"buyerAddress1"`
 }
 
 //OrderBuyerStatus model
@@ -82,36 +84,38 @@ type OrderStatus struct {
 	Pending   string `json:"pending"`
 }
 
-//OrderBuyerStatusDetails buyer order status 
+//OrderBuyerStatusDetails buyer order status
 type OrderBuyerStatusDetails struct {
-	BuyerId      string `json:"buyerId"`
-	OrderDate    string `json:"orderDate"`
-	Pending      string `json:"pending"`
-	Bounced      string `json:"bounced"`
-	Billed       string `json:"billed"`
-	BuyerName    string `json:"buyerName"`
-	BuyerCity    string `json:"City"`
-	BuyerEmail   string `json:"Email"`
-	BuyerMobile  string `json:"Mobile"`
-	BuyerPhoneNo string `json:"PhoneNo"`
-	BuyerPincode string `json:"Pincode"`
-	BuyerState   string `json:"State"`
+	BuyerId       string `json:"buyerId"`
+	OrderDate     string `json:"orderDate"`
+	Pending       string `json:"pending"`
+	Bounced       string `json:"bounced"`
+	Billed        string `json:"billed"`
+	BuyerName     string `json:"buyerName"`
+	BuyerCity     string `json:"City"`
+	BuyerEmail    string `json:"Email"`
+	BuyerMobile   string `json:"Mobile"`
+	BuyerPhoneNo  string `json:"PhoneNo"`
+	BuyerPincode  string `json:"Pincode"`
+	BuyerState    string `json:"State"`
+	BuyerAddress1 string `json:"Address1"`
 }
 
 //OrderSupplierStatusDetails supplier order status model
 type OrderSupplierStatusDetails struct {
-	SupplierId      string `json:"supplierID"`
-	OrderDate       string `json:"orderDate"`
-	Pending         string `json:"pending"`
-	Bounced         string `json:"bounced"`
-	Billed          string `json:"billed"`
-	SupplierName    string `json:"supplierName"`
-	SupplierCity    string `json:"city"`
-	SupplierEmail   string `json:"email"`
-	SupplierMobile  string `json:"mobile"`
-	SupplierPhoneNo string `json:"phoneNo"`
-	SupplierPincode string `json:"pincode"`
-	SupplierState   string `json:"state"`
+	SupplierId       string `json:"supplierID"`
+	OrderDate        string `json:"orderDate"`
+	Pending          string `json:"pending"`
+	Bounced          string `json:"bounced"`
+	Billed           string `json:"billed"`
+	SupplierName     string `json:"supplierName"`
+	SupplierCity     string `json:"city"`
+	SupplierEmail    string `json:"email"`
+	SupplierMobile   string `json:"mobile"`
+	SupplierPhoneNo  string `json:"phoneNo"`
+	SupplierPincode  string `json:"pincode"`
+	SupplierState    string `json:"state"`
+	SupplierAddress1 string `json:"Address1"`
 }
 
 //OrderByWorkspaceID order worksapce model
@@ -182,7 +186,7 @@ type SmartOrdersDetails struct {
 
 //TableName retunrs source table name
 func (OrderDetails) TableName() string {
-	return "dbo.V_ORDERS_BY_ORDER_NUMBER"
+	return "dbo.V_ORDERS_DETAILS"
 }
 
 //TableName retunrs source table name
