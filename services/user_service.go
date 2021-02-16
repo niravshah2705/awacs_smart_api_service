@@ -46,4 +46,3 @@ func BindUserDetails(role string, objInterface interface{}) (objModel model.User
 	objModel.Pincode = objReflact.FieldByName(role + "Pincode").String()
 	return
 }
-0
