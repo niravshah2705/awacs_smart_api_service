@@ -37,12 +37,12 @@ func Products(Product *[]*model.Product, productName string) (err error) {
 		if _, ok := productMap[key]; !ok {
 			//fill product details
 			tempProduct := BindProductDetails(*val)
+			tempUser := BindUserDetails("Buyer", *val)
+			tempProduct.Distributors = &tempUser
 			productMap[key] = tempProduct
 		}
 		tempProduct := productMap[key]
 		//fill buyer details
-		tempUser := BindUserDetails("Buyer", *val)
-		tempProduct.Distributors = append(tempProduct.Distributors, &tempUser)
 		productMap[key] = tempProduct
 
 	}

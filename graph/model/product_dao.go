@@ -63,8 +63,9 @@ type Product struct {
 	IgstAmount               float64 `json:"igstAmount"`
 	Cess                     float64 `json:"cess"`
 	CessAmount               float64 `json:"cessAmount"`
-	Distributors             []*User `json:"distributors"`
+	Distributors             *User   `json:"distributors"`
 }
+
 type ProductDetails struct {
 	ProductCode      string  `json:"ProductCode"`
 	ProductName      string  `json:"ProductName"`

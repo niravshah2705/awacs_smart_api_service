@@ -63,6 +63,8 @@ func InvoiceByBuyer(InvoiceBuyer *model.InvoiceBuyer, buyerID string, fromDate s
 		logger.Error("Invoice details by buyer: ",err)
 		return
 	}
+
+
 	iMap := make(map[string]model.Invoice, len(InvoiceDetails))
 	for _, val := range InvoiceDetails {
 		flag := 1

@@ -144,14 +144,12 @@ func (r *queryResolver) WorkspaceByWorkspaceID(ctx context.Context, workspace st
 
 func (r *queryResolver) MyOrders(ctx context.Context, userName string, fromDate string, toDate string) (*model.SmartOrders, error) {
 	var Smartorder model.SmartOrders
-	err := services.MyOrders(&Smartorder, userName,fromDate,toDate)
+	err := services.MyOrders(&Smartorder, userName, fromDate, toDate)
 	ret := LogResponce("Workspace_by_workspaceId", 1, err)
 	if !ret {
 		return nil, err
 	}
 	return &Smartorder, nil
-	
-	
 }
 
 // Mutation returns generated.MutationResolver implementation.
