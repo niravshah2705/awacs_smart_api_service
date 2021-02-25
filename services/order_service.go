@@ -3,20 +3,23 @@ package services
 import (
 	"awacs_smart_api_service/graph/model"
 	"reflect"
+	"strings"
+
+	"awacs_smart_api_service/dal"
 
 	"github.com/brkelkar/common_utils/logger"
-
-	db "github.com/brkelkar/common_utils/databases"
 )
 
 //OrderByUserID get order details by user id
 func OrderByUserID(Order *[]*model.Order, buyerID string) (err error) {
 	var OrderDetails []*model.OrderDetails
-	err = db.DB["smartdb"].Where("buyerId='" + buyerID + "'").Find(&OrderDetails).Error
+	clouse := "buyerId='" + buyerID + "'"
+	err = dal.OrderDetails(&OrderDetails, clouse)
 	if err != nil {
 		logger.Error("Order details by userId: ", err)
 		return
 	}
+
 	orderMap := make(map[string]model.Order, len(OrderDetails))
 	for _, val := range OrderDetails {
 		if _, ok := orderMap[val.OrderNumber]; !ok {
@@ -41,7 +44,8 @@ func OrderByUserID(Order *[]*model.Order, buyerID string) (err error) {
 //OrderByWorkspaceID get order details by workspace id
 func OrderByWorkspaceID(Order *model.OrderByWorkspaceID, workspaceID string, fromDate string, toDate string) (err error) {
 	var OrderDetails []*model.OrderDetails
-	err = db.DB["smartdb"].Where("WorkspaceId='" + workspaceID + "' and OrderDate  between '" + fromDate + "' and '" + toDate + "'").Find(&OrderDetails).Error
+	clouse := "WorkspaceId='" + workspaceID + "' and OrderDate  between '" + fromDate + "' and '" + toDate + "'"
+	err = dal.OrderDetails(&OrderDetails, clouse)
 	if err != nil {
 		logger.Error("Order details by workspaceId: ", err)
 		return
@@ -78,7 +82,8 @@ func OrderByWorkspaceID(Order *model.OrderByWorkspaceID, workspaceID string, fro
 //OrderByOrderNumber get order details by order number
 func OrderByOrderNumber(Order *model.Order, orderNumber string) (err error) {
 	var OrderDetails []*model.OrderDetails
-	err = db.DB["smartdb"].Where("OrderNumber='" + orderNumber + "'").Find(&OrderDetails).Error
+	clouse := "OrderNumber='" + orderNumber + "'"
+	err = dal.OrderDetails(&OrderDetails, clouse)
 	if err != nil {
 		logger.Error("Order details by Ordernumber: ", err)
 		return
@@ -107,7 +112,8 @@ func OrderByOrderNumber(Order *model.Order, orderNumber string) (err error) {
 //OrderstatusByBuyerID get status count by buyer
 func OrderstatusByBuyerID(Orderstatus *model.OrderBuyerStatus, BuyerID string, fromDate string, toDate string) (err error) {
 	var Orderdetails []*model.OrderBuyerStatusDetails
-	err = db.DB["smartdb"].Where("BuyerId='" + BuyerID + "'and Orderdate between '" + fromDate + "' and '" + toDate + "' order by 2 desc").Find(&Orderdetails).Error
+	clouse := "BuyerId='" + BuyerID + "'and Orderdate between '" + fromDate + "' and '" + toDate + "' order by 2 desc"
+	err = dal.OrderstatusByBuyerID(&Orderdetails, clouse)
 	if err != nil {
 		logger.Error("Order status by buyerId: ", err)
 		return
@@ -136,7 +142,8 @@ func OrderstatusByBuyerID(Orderstatus *model.OrderBuyerStatus, BuyerID string, f
 //OrderstatusBySupplierID get status and count by supplierId
 func OrderstatusBySupplierID(Orderstatus *model.OrderSupplierStatus, SupplierID string, fromDate string, toDate string) (err error) {
 	var Orderdetails []*model.OrderSupplierStatusDetails
-	err = db.DB["smartdb"].Where("SupplierId='" + SupplierID + "'and Orderdate between '" + fromDate + "' and '" + toDate + "' order by 2 desc").Find(&Orderdetails).Error
+	clouse := "SupplierId='" + SupplierID + "'and Orderdate between '" + fromDate + "' and '" + toDate + "' order by 2 desc"
+	err = dal.OrderstatusBySupplierID(&Orderdetails, clouse)
 	if err != nil {
 		logger.Error("Order status by supplierId: ", err)
 		return
@@ -165,52 +172,93 @@ func OrderstatusBySupplierID(Orderstatus *model.OrderSupplierStatus, SupplierID 
 //MyOrders get aggregator my orders
 func MyOrders(Myorder *model.SmartOrders, retailerName string, fromDate string, toDate string) (err error) {
 	var SmartOrderDetails []*model.SmartOrdersDetails
-	err = db.DB["awacs"].Where("UserName = '" + retailerName + "' AND OrderDate between '" + fromDate + "' and '" + toDate + "'").Find(&SmartOrderDetails).Error
+	clouse := "UserName = '" + retailerName + "' AND OrderDate between '" + fromDate + "' and '" + toDate + "'"
+	err = dal.MyOrders(&SmartOrderDetails, clouse)
 	if err != nil {
-		logger.Error("Order details by userId: ", err)
+		logger.Error("MyOrders for Affregator and Retailer: ", err)
 		return
 	}
-	aggregatorMap := make(map[string]model.Order, len(SmartOrderDetails))
-	retailerMap := make(map[string]model.Order, len(SmartOrderDetails))
+	if len(SmartOrderDetails) > 0 {
+		aggregatororderMap := make(map[string]model.Order, len(SmartOrderDetails))
+		retailerorderMap := make(map[string]model.Order, len(SmartOrderDetails))
+		retailerMap := make(map[string]model.User)
+		aggregatorMap := make(map[string]model.User)
 
-	retailer := BindUserDetails("Retailer", *SmartOrderDetails[0])
-	Myorder.Retailer = &retailer
+		for _, val := range SmartOrderDetails {
+			orderkey := val.RetailerCode + "_" + val.OrderNumber
 
-	for _, val := range SmartOrderDetails {
-		if val.OrderType == "Aggregator" {
-			if _, ok := aggregatorMap[val.OrderNumber]; !ok {
-				//fill order details
-				tempOrder := BindOrderDetails(*val)
-				aggregatorMap[val.OrderNumber] = tempOrder
+			if val.OrderType == "Aggregator" {
+				if _, isretailer := aggregatorMap[val.RetailerCode]; !isretailer {
+					//fill user details
+					retailer := BindUserDetails("Retailer", *val)
+					aggregatorMap[val.RetailerCode] = retailer
+				}
+
+				if _, ok := aggregatororderMap[orderkey]; !ok {
+					//fill order details
+					tempOrder := BindOrderDetails(*val)
+					//fill user details
+					supplier := BindUserDetails("Supplier", *val)
+					tempOrder.Supplier = &supplier
+
+					aggregatororderMap[orderkey] = tempOrder
+				}
+				o, _ := aggregatororderMap[orderkey]
+
+				//fill product details
+				product := BindProductDetails(*val)
+				o.Products = append(o.Products, &product)
+
+				aggregatororderMap[orderkey] = o
+
+			} else if val.OrderType == "Retailer" {
+				if _, isretailer := retailerMap[val.RetailerCode]; !isretailer {
+					//fill user details
+					retailer := BindUserDetails("Retailer", *val)
+					retailerMap[val.RetailerCode] = retailer
+				}
+
+				if _, ok := retailerorderMap[orderkey]; !ok {
+					//fill order details
+					tempOrder := BindOrderDetails(*val)
+					//fill user details
+					supplier := BindUserDetails("Supplier", *val)
+					tempOrder.Supplier = &supplier
+
+					retailerorderMap[orderkey] = tempOrder
+				}
+				o, _ := retailerorderMap[orderkey]
+				//fill product details
+				product := BindProductDetails(*val)
+				o.Products = append(o.Products, &product)
+
+				retailerorderMap[orderkey] = o
 			}
-			o, _ := aggregatorMap[val.OrderNumber]
-			//fill product details
-			product := BindProductDetails(*val)
-			o.Products = append(o.Products, &product)
-			aggregatorMap[val.OrderNumber] = o
 		}
-		if val.OrderType == "Aggregator" {
-			if _, ok := retailerMap[val.OrderNumber]; !ok {
-				//fill order details
-				tempOrder := BindOrderDetails(*val)
-				retailerMap[val.OrderNumber] = tempOrder
-			}
-			// o, _ := retailerMap[val.OrderNumber]
-			// //fill product details
-			// product := BindProductDetails(*val)
-			// o.Products = append(o.Products, &product)
-			// retailerMap[val.OrderNumber] = o
+
+		for key, mapVal := range retailerorderMap {
+			temp := mapVal
+			rr, _ := retailerMap[strings.Split(key, "_")[0]]
+			rr.Orders = append(rr.Orders, &temp)
+			retailerMap[strings.Split(key, "_")[0]] = rr
 		}
-	}
 
-	for _, mapVal := range aggregatorMap {
-		temp := mapVal
-		Myorder.AggregatorOrders = append(Myorder.AggregatorOrders, &temp)
-	}
+		for _, mapVal := range retailerMap {
+			temp := mapVal
+			Myorder.RetailerOrders = append(Myorder.RetailerOrders, &temp)
+		}
 
-	for _, mapVal := range retailerMap {
-		temp := mapVal
-		Myorder.RetailerOrders = append(Myorder.AggregatorOrders, &temp)
+		for key, mapVal := range aggregatororderMap {
+			temp := mapVal
+			rr, _ := aggregatorMap[strings.Split(key, "_")[0]]
+			rr.Orders = append(rr.Orders, &temp)
+			aggregatorMap[strings.Split(key, "_")[0]] = rr
+		}
+
+		for _, mapVal := range aggregatorMap {
+			temp := mapVal
+			Myorder.AggregatorOrders = append(Myorder.AggregatorOrders, &temp)
+		}
 	}
 
 	return

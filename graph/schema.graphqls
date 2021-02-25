@@ -116,6 +116,7 @@ userKind: String!
 bank: String!
 iFSCCode: String!
 userId: String!
+orders:[Order!]!
 }
 
 type OrderByWorkspaceId{
@@ -223,10 +224,34 @@ type Workspaces{
 }
 
 type SmartOrders{
-	Retailer:User!
-	AggregatorOrders:[Order!]!
-	RetailerOrders:[Order!]!
+	AggregatorOrders:[User!]!
+	RetailerOrders:[User!]!
 }
+
+type SupperOrderDeatils{
+	SupplierId:String!
+	SupplierName:String!
+	Pending:Int!
+	Bounced:Int!
+	Billed:Int!
+	Short:Int!
+	TotalOrder:Int!
+	CurrentOutstanding:Float!
+	ProductCount:Int!	
+}
+
+type BuyerDashboard{
+	TotalOrders:Int! 
+	TotalPendingOrders:Int!
+	TotalBilledOrders:Int!
+	TotalShortOrders:Int!
+	TotalBounceOrders:Int!
+	TotalOutstanding:Float!
+	TotalProductOrdered:Int!
+	Supper:[SupperOrderDeatils!]!
+	Buyer:User!
+}
+
 
 type Query {
   products(productName: String!): [Product!]!
@@ -244,6 +269,7 @@ type Query {
   orderByOrderNumber(orderNumber: String!):Order!
   workspaceByWorkspaceId(workspace: String!):Workspaces!
   myOrders(userName:String!,fromDate:String!,toDate:String!):SmartOrders!
+  buyerDashboard(buyerName:String!,fromDate:String!,toDate:String!):BuyerDashboard!
 }
 
 input NewProduct {

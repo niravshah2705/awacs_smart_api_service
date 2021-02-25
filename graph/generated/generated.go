@@ -56,6 +56,18 @@ type ComplexityRoot struct {
 		Strength    func(childComplexity int) int
 	}
 
+	BuyerDashboard struct {
+		Buyer               func(childComplexity int) int
+		Supper              func(childComplexity int) int
+		TotalBilledOrders   func(childComplexity int) int
+		TotalBounceOrders   func(childComplexity int) int
+		TotalOrders         func(childComplexity int) int
+		TotalOutstanding    func(childComplexity int) int
+		TotalPendingOrders  func(childComplexity int) int
+		TotalProductOrdered func(childComplexity int) int
+		TotalShortOrders    func(childComplexity int) int
+	}
+
 	Invoice struct {
 		BillDate                 func(childComplexity int) int
 		BillNumber               func(childComplexity int) int
@@ -185,6 +197,7 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
+		BuyerDashboard           func(childComplexity int, buyerName string, fromDate string, toDate string) int
 		InvoiceByBuyer           func(childComplexity int, buyerID string, fromDate string, toDate string) int
 		InvoiceDetails           func(childComplexity int, buyerID string, supplierID string, fromDate string, toDate string) int
 		MyOrders                 func(childComplexity int, userName string, fromDate string, toDate string) int
@@ -204,8 +217,19 @@ type ComplexityRoot struct {
 
 	SmartOrders struct {
 		AggregatorOrders func(childComplexity int) int
-		Retailer         func(childComplexity int) int
 		RetailerOrders   func(childComplexity int) int
+	}
+
+	SupperOrderDeatils struct {
+		Billed             func(childComplexity int) int
+		Bounced            func(childComplexity int) int
+		CurrentOutstanding func(childComplexity int) int
+		Pending            func(childComplexity int) int
+		ProductCount       func(childComplexity int) int
+		Short              func(childComplexity int) int
+		SupplierID         func(childComplexity int) int
+		SupplierName       func(childComplexity int) int
+		TotalOrder         func(childComplexity int) int
 	}
 
 	User struct {
@@ -238,6 +262,7 @@ type ComplexityRoot struct {
 		Mobile                func(childComplexity int) int
 		Name                  func(childComplexity int) int
 		OSVersion             func(childComplexity int) int
+		Orders                func(childComplexity int) int
 		PObotp                func(childComplexity int) int
 		PhoneNo               func(childComplexity int) int
 		PictureID             func(childComplexity int) int
@@ -311,6 +336,7 @@ type QueryResolver interface {
 	OrderByOrderNumber(ctx context.Context, orderNumber string) (*model.Order, error)
 	WorkspaceByWorkspaceID(ctx context.Context, workspace string) (*model.Workspaces, error)
 	MyOrders(ctx context.Context, userName string, fromDate string, toDate string) (*model.SmartOrders, error)
+	BuyerDashboard(ctx context.Context, buyerName string, fromDate string, toDate string) (*model.BuyerDashboard, error)
 }
 
 type executableSchema struct {
@@ -397,6 +423,69 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.AWACSProduct.Strength(childComplexity), true
+
+	case "BuyerDashboard.Buyer":
+		if e.complexity.BuyerDashboard.Buyer == nil {
+			break
+		}
+
+		return e.complexity.BuyerDashboard.Buyer(childComplexity), true
+
+	case "BuyerDashboard.Supper":
+		if e.complexity.BuyerDashboard.Supper == nil {
+			break
+		}
+
+		return e.complexity.BuyerDashboard.Supper(childComplexity), true
+
+	case "BuyerDashboard.TotalBilledOrders":
+		if e.complexity.BuyerDashboard.TotalBilledOrders == nil {
+			break
+		}
+
+		return e.complexity.BuyerDashboard.TotalBilledOrders(childComplexity), true
+
+	case "BuyerDashboard.TotalBounceOrders":
+		if e.complexity.BuyerDashboard.TotalBounceOrders == nil {
+			break
+		}
+
+		return e.complexity.BuyerDashboard.TotalBounceOrders(childComplexity), true
+
+	case "BuyerDashboard.TotalOrders":
+		if e.complexity.BuyerDashboard.TotalOrders == nil {
+			break
+		}
+
+		return e.complexity.BuyerDashboard.TotalOrders(childComplexity), true
+
+	case "BuyerDashboard.TotalOutstanding":
+		if e.complexity.BuyerDashboard.TotalOutstanding == nil {
+			break
+		}
+
+		return e.complexity.BuyerDashboard.TotalOutstanding(childComplexity), true
+
+	case "BuyerDashboard.TotalPendingOrders":
+		if e.complexity.BuyerDashboard.TotalPendingOrders == nil {
+			break
+		}
+
+		return e.complexity.BuyerDashboard.TotalPendingOrders(childComplexity), true
+
+	case "BuyerDashboard.TotalProductOrdered":
+		if e.complexity.BuyerDashboard.TotalProductOrdered == nil {
+			break
+		}
+
+		return e.complexity.BuyerDashboard.TotalProductOrdered(childComplexity), true
+
+	case "BuyerDashboard.TotalShortOrders":
+		if e.complexity.BuyerDashboard.TotalShortOrders == nil {
+			break
+		}
+
+		return e.complexity.BuyerDashboard.TotalShortOrders(childComplexity), true
 
 	case "Invoice.billDate":
 		if e.complexity.Invoice.BillDate == nil {
@@ -1110,6 +1199,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Product.VatApplication(childComplexity), true
 
+	case "Query.buyerDashboard":
+		if e.complexity.Query.BuyerDashboard == nil {
+			break
+		}
+
+		args, err := ec.field_Query_buyerDashboard_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.BuyerDashboard(childComplexity, args["buyerName"].(string), args["fromDate"].(string), args["toDate"].(string)), true
+
 	case "Query.invoiceByBuyer":
 		if e.complexity.Query.InvoiceByBuyer == nil {
 			break
@@ -1297,19 +1398,75 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.SmartOrders.AggregatorOrders(childComplexity), true
 
-	case "SmartOrders.Retailer":
-		if e.complexity.SmartOrders.Retailer == nil {
-			break
-		}
-
-		return e.complexity.SmartOrders.Retailer(childComplexity), true
-
 	case "SmartOrders.RetailerOrders":
 		if e.complexity.SmartOrders.RetailerOrders == nil {
 			break
 		}
 
 		return e.complexity.SmartOrders.RetailerOrders(childComplexity), true
+
+	case "SupperOrderDeatils.Billed":
+		if e.complexity.SupperOrderDeatils.Billed == nil {
+			break
+		}
+
+		return e.complexity.SupperOrderDeatils.Billed(childComplexity), true
+
+	case "SupperOrderDeatils.Bounced":
+		if e.complexity.SupperOrderDeatils.Bounced == nil {
+			break
+		}
+
+		return e.complexity.SupperOrderDeatils.Bounced(childComplexity), true
+
+	case "SupperOrderDeatils.CurrentOutstanding":
+		if e.complexity.SupperOrderDeatils.CurrentOutstanding == nil {
+			break
+		}
+
+		return e.complexity.SupperOrderDeatils.CurrentOutstanding(childComplexity), true
+
+	case "SupperOrderDeatils.Pending":
+		if e.complexity.SupperOrderDeatils.Pending == nil {
+			break
+		}
+
+		return e.complexity.SupperOrderDeatils.Pending(childComplexity), true
+
+	case "SupperOrderDeatils.ProductCount":
+		if e.complexity.SupperOrderDeatils.ProductCount == nil {
+			break
+		}
+
+		return e.complexity.SupperOrderDeatils.ProductCount(childComplexity), true
+
+	case "SupperOrderDeatils.Short":
+		if e.complexity.SupperOrderDeatils.Short == nil {
+			break
+		}
+
+		return e.complexity.SupperOrderDeatils.Short(childComplexity), true
+
+	case "SupperOrderDeatils.SupplierId":
+		if e.complexity.SupperOrderDeatils.SupplierID == nil {
+			break
+		}
+
+		return e.complexity.SupperOrderDeatils.SupplierID(childComplexity), true
+
+	case "SupperOrderDeatils.SupplierName":
+		if e.complexity.SupperOrderDeatils.SupplierName == nil {
+			break
+		}
+
+		return e.complexity.SupperOrderDeatils.SupplierName(childComplexity), true
+
+	case "SupperOrderDeatils.TotalOrder":
+		if e.complexity.SupperOrderDeatils.TotalOrder == nil {
+			break
+		}
+
+		return e.complexity.SupperOrderDeatils.TotalOrder(childComplexity), true
 
 	case "User.address1":
 		if e.complexity.User.Address1 == nil {
@@ -1513,6 +1670,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.User.OSVersion(childComplexity), true
+
+	case "User.orders":
+		if e.complexity.User.Orders == nil {
+			break
+		}
+
+		return e.complexity.User.Orders(childComplexity), true
 
 	case "User.pOBOTP":
 		if e.complexity.User.PObotp == nil {
@@ -2032,6 +2196,7 @@ userKind: String!
 bank: String!
 iFSCCode: String!
 userId: String!
+orders:[Order!]!
 }
 
 type OrderByWorkspaceId{
@@ -2139,10 +2304,34 @@ type Workspaces{
 }
 
 type SmartOrders{
-	Retailer:User!
-	AggregatorOrders:[Order!]!
-	RetailerOrders:[Order!]!
+	AggregatorOrders:[User!]!
+	RetailerOrders:[User!]!
 }
+
+type SupperOrderDeatils{
+	SupplierId:String!
+	SupplierName:String!
+	Pending:Int!
+	Bounced:Int!
+	Billed:Int!
+	Short:Int!
+	TotalOrder:Int!
+	CurrentOutstanding:Float!
+	ProductCount:Int!	
+}
+
+type BuyerDashboard{
+	TotalOrders:Int! 
+	TotalPendingOrders:Int!
+	TotalBilledOrders:Int!
+	TotalShortOrders:Int!
+	TotalBounceOrders:Int!
+	TotalOutstanding:Float!
+	TotalProductOrdered:Int!
+	Supper:[SupperOrderDeatils!]!
+	Buyer:User!
+}
+
 
 type Query {
   products(productName: String!): [Product!]!
@@ -2160,6 +2349,7 @@ type Query {
   orderByOrderNumber(orderNumber: String!):Order!
   workspaceByWorkspaceId(workspace: String!):Workspaces!
   myOrders(userName:String!,fromDate:String!,toDate:String!):SmartOrders!
+  buyerDashboard(buyerName:String!,fromDate:String!,toDate:String!):BuyerDashboard!
 }
 
 input NewProduct {
@@ -2203,6 +2393,39 @@ func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs
 		}
 	}
 	args["name"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_buyerDashboard_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["buyerName"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("buyerName"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["buyerName"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["fromDate"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("fromDate"))
+		arg1, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["fromDate"] = arg1
+	var arg2 string
+	if tmp, ok := rawArgs["toDate"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("toDate"))
+		arg2, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["toDate"] = arg2
 	return args, nil
 }
 
@@ -2934,6 +3157,321 @@ func (ec *executionContext) _AWACSProduct_pts(ctx context.Context, field graphql
 	res := resTmp.(float64)
 	fc.Result = res
 	return ec.marshalNFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _BuyerDashboard_TotalOrders(ctx context.Context, field graphql.CollectedField, obj *model.BuyerDashboard) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "BuyerDashboard",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalOrders, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _BuyerDashboard_TotalPendingOrders(ctx context.Context, field graphql.CollectedField, obj *model.BuyerDashboard) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "BuyerDashboard",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalPendingOrders, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _BuyerDashboard_TotalBilledOrders(ctx context.Context, field graphql.CollectedField, obj *model.BuyerDashboard) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "BuyerDashboard",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalBilledOrders, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _BuyerDashboard_TotalShortOrders(ctx context.Context, field graphql.CollectedField, obj *model.BuyerDashboard) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "BuyerDashboard",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalShortOrders, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _BuyerDashboard_TotalBounceOrders(ctx context.Context, field graphql.CollectedField, obj *model.BuyerDashboard) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "BuyerDashboard",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalBounceOrders, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _BuyerDashboard_TotalOutstanding(ctx context.Context, field graphql.CollectedField, obj *model.BuyerDashboard) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "BuyerDashboard",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalOutstanding, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalNFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _BuyerDashboard_TotalProductOrdered(ctx context.Context, field graphql.CollectedField, obj *model.BuyerDashboard) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "BuyerDashboard",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalProductOrdered, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _BuyerDashboard_Supper(ctx context.Context, field graphql.CollectedField, obj *model.BuyerDashboard) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "BuyerDashboard",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Supper, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.SupperOrderDeatils)
+	fc.Result = res
+	return ec.marshalNSupperOrderDeatils2ᚕᚖawacs_smart_api_serviceᚋgraphᚋmodelᚐSupperOrderDeatilsᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _BuyerDashboard_Buyer(ctx context.Context, field graphql.CollectedField, obj *model.BuyerDashboard) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "BuyerDashboard",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Buyer, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.User)
+	fc.Result = res
+	return ec.marshalNUser2ᚖawacs_smart_api_serviceᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Invoice_id(ctx context.Context, field graphql.CollectedField, obj *model.Invoice) (ret graphql.Marshaler) {
@@ -7108,6 +7646,48 @@ func (ec *executionContext) _Query_myOrders(ctx context.Context, field graphql.C
 	return ec.marshalNSmartOrders2ᚖawacs_smart_api_serviceᚋgraphᚋmodelᚐSmartOrders(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Query_buyerDashboard(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_buyerDashboard_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().BuyerDashboard(rctx, args["buyerName"].(string), args["fromDate"].(string), args["toDate"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.BuyerDashboard)
+	fc.Result = res
+	return ec.marshalNBuyerDashboard2ᚖawacs_smart_api_serviceᚋgraphᚋmodelᚐBuyerDashboard(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -7179,41 +7759,6 @@ func (ec *executionContext) _Query___schema(ctx context.Context, field graphql.C
 	return ec.marshalO__Schema2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐSchema(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _SmartOrders_Retailer(ctx context.Context, field graphql.CollectedField, obj *model.SmartOrders) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "SmartOrders",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Retailer, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*model.User)
-	fc.Result = res
-	return ec.marshalNUser2ᚖawacs_smart_api_serviceᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
-}
-
 func (ec *executionContext) _SmartOrders_AggregatorOrders(ctx context.Context, field graphql.CollectedField, obj *model.SmartOrders) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -7244,9 +7789,9 @@ func (ec *executionContext) _SmartOrders_AggregatorOrders(ctx context.Context, f
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*model.Order)
+	res := resTmp.([]*model.User)
 	fc.Result = res
-	return ec.marshalNOrder2ᚕᚖawacs_smart_api_serviceᚋgraphᚋmodelᚐOrderᚄ(ctx, field.Selections, res)
+	return ec.marshalNUser2ᚕᚖawacs_smart_api_serviceᚋgraphᚋmodelᚐUserᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _SmartOrders_RetailerOrders(ctx context.Context, field graphql.CollectedField, obj *model.SmartOrders) (ret graphql.Marshaler) {
@@ -7279,9 +7824,324 @@ func (ec *executionContext) _SmartOrders_RetailerOrders(ctx context.Context, fie
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*model.Order)
+	res := resTmp.([]*model.User)
 	fc.Result = res
-	return ec.marshalNOrder2ᚕᚖawacs_smart_api_serviceᚋgraphᚋmodelᚐOrderᚄ(ctx, field.Selections, res)
+	return ec.marshalNUser2ᚕᚖawacs_smart_api_serviceᚋgraphᚋmodelᚐUserᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _SupperOrderDeatils_SupplierId(ctx context.Context, field graphql.CollectedField, obj *model.SupperOrderDeatils) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "SupperOrderDeatils",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SupplierID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _SupperOrderDeatils_SupplierName(ctx context.Context, field graphql.CollectedField, obj *model.SupperOrderDeatils) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "SupperOrderDeatils",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SupplierName, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _SupperOrderDeatils_Pending(ctx context.Context, field graphql.CollectedField, obj *model.SupperOrderDeatils) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "SupperOrderDeatils",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Pending, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _SupperOrderDeatils_Bounced(ctx context.Context, field graphql.CollectedField, obj *model.SupperOrderDeatils) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "SupperOrderDeatils",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Bounced, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _SupperOrderDeatils_Billed(ctx context.Context, field graphql.CollectedField, obj *model.SupperOrderDeatils) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "SupperOrderDeatils",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Billed, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _SupperOrderDeatils_Short(ctx context.Context, field graphql.CollectedField, obj *model.SupperOrderDeatils) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "SupperOrderDeatils",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Short, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _SupperOrderDeatils_TotalOrder(ctx context.Context, field graphql.CollectedField, obj *model.SupperOrderDeatils) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "SupperOrderDeatils",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalOrder, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _SupperOrderDeatils_CurrentOutstanding(ctx context.Context, field graphql.CollectedField, obj *model.SupperOrderDeatils) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "SupperOrderDeatils",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CurrentOutstanding, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalNFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _SupperOrderDeatils_ProductCount(ctx context.Context, field graphql.CollectedField, obj *model.SupperOrderDeatils) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "SupperOrderDeatils",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ProductCount, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _User_id(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
@@ -8997,6 +9857,41 @@ func (ec *executionContext) _User_userId(ctx context.Context, field graphql.Coll
 	res := resTmp.(string)
 	fc.Result = res
 	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _User_orders(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Orders, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.Order)
+	fc.Result = res
+	return ec.marshalNOrder2ᚕᚖawacs_smart_api_serviceᚋgraphᚋmodelᚐOrderᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Workspaces_Id(ctx context.Context, field graphql.CollectedField, obj *model.Workspaces) (ret graphql.Marshaler) {
@@ -11166,6 +12061,73 @@ func (ec *executionContext) _AWACSProduct(ctx context.Context, sel ast.Selection
 	return out
 }
 
+var buyerDashboardImplementors = []string{"BuyerDashboard"}
+
+func (ec *executionContext) _BuyerDashboard(ctx context.Context, sel ast.SelectionSet, obj *model.BuyerDashboard) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, buyerDashboardImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("BuyerDashboard")
+		case "TotalOrders":
+			out.Values[i] = ec._BuyerDashboard_TotalOrders(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "TotalPendingOrders":
+			out.Values[i] = ec._BuyerDashboard_TotalPendingOrders(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "TotalBilledOrders":
+			out.Values[i] = ec._BuyerDashboard_TotalBilledOrders(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "TotalShortOrders":
+			out.Values[i] = ec._BuyerDashboard_TotalShortOrders(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "TotalBounceOrders":
+			out.Values[i] = ec._BuyerDashboard_TotalBounceOrders(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "TotalOutstanding":
+			out.Values[i] = ec._BuyerDashboard_TotalOutstanding(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "TotalProductOrdered":
+			out.Values[i] = ec._BuyerDashboard_TotalProductOrdered(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "Supper":
+			out.Values[i] = ec._BuyerDashboard_Supper(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "Buyer":
+			out.Values[i] = ec._BuyerDashboard_Buyer(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var invoiceImplementors = []string{"Invoice"}
 
 func (ec *executionContext) _Invoice(ctx context.Context, sel ast.SelectionSet, obj *model.Invoice) graphql.Marshaler {
@@ -12098,6 +13060,20 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				}
 				return res
 			})
+		case "buyerDashboard":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_buyerDashboard(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
 		case "__type":
 			out.Values[i] = ec._Query___type(ctx, field)
 		case "__schema":
@@ -12124,11 +13100,6 @@ func (ec *executionContext) _SmartOrders(ctx context.Context, sel ast.SelectionS
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("SmartOrders")
-		case "Retailer":
-			out.Values[i] = ec._SmartOrders_Retailer(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
 		case "AggregatorOrders":
 			out.Values[i] = ec._SmartOrders_AggregatorOrders(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -12136,6 +13107,73 @@ func (ec *executionContext) _SmartOrders(ctx context.Context, sel ast.SelectionS
 			}
 		case "RetailerOrders":
 			out.Values[i] = ec._SmartOrders_RetailerOrders(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var supperOrderDeatilsImplementors = []string{"SupperOrderDeatils"}
+
+func (ec *executionContext) _SupperOrderDeatils(ctx context.Context, sel ast.SelectionSet, obj *model.SupperOrderDeatils) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, supperOrderDeatilsImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("SupperOrderDeatils")
+		case "SupplierId":
+			out.Values[i] = ec._SupperOrderDeatils_SupplierId(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "SupplierName":
+			out.Values[i] = ec._SupperOrderDeatils_SupplierName(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "Pending":
+			out.Values[i] = ec._SupperOrderDeatils_Pending(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "Bounced":
+			out.Values[i] = ec._SupperOrderDeatils_Bounced(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "Billed":
+			out.Values[i] = ec._SupperOrderDeatils_Billed(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "Short":
+			out.Values[i] = ec._SupperOrderDeatils_Short(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "TotalOrder":
+			out.Values[i] = ec._SupperOrderDeatils_TotalOrder(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "CurrentOutstanding":
+			out.Values[i] = ec._SupperOrderDeatils_CurrentOutstanding(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "ProductCount":
+			out.Values[i] = ec._SupperOrderDeatils_ProductCount(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -12403,6 +13441,11 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			}
 		case "userId":
 			out.Values[i] = ec._User_userId(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "orders":
+			out.Values[i] = ec._User_orders(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -12886,6 +13929,20 @@ func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.Se
 	return res
 }
 
+func (ec *executionContext) marshalNBuyerDashboard2awacs_smart_api_serviceᚋgraphᚋmodelᚐBuyerDashboard(ctx context.Context, sel ast.SelectionSet, v model.BuyerDashboard) graphql.Marshaler {
+	return ec._BuyerDashboard(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNBuyerDashboard2ᚖawacs_smart_api_serviceᚋgraphᚋmodelᚐBuyerDashboard(ctx context.Context, sel ast.SelectionSet, v *model.BuyerDashboard) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._BuyerDashboard(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalNFloat2float64(ctx context.Context, v interface{}) (float64, error) {
 	res, err := graphql.UnmarshalFloat(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -13217,8 +14274,92 @@ func (ec *executionContext) marshalNString2string(ctx context.Context, sel ast.S
 	return res
 }
 
+func (ec *executionContext) marshalNSupperOrderDeatils2ᚕᚖawacs_smart_api_serviceᚋgraphᚋmodelᚐSupperOrderDeatilsᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.SupperOrderDeatils) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNSupperOrderDeatils2ᚖawacs_smart_api_serviceᚋgraphᚋmodelᚐSupperOrderDeatils(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalNSupperOrderDeatils2ᚖawacs_smart_api_serviceᚋgraphᚋmodelᚐSupperOrderDeatils(ctx context.Context, sel ast.SelectionSet, v *model.SupperOrderDeatils) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._SupperOrderDeatils(ctx, sel, v)
+}
+
 func (ec *executionContext) marshalNUser2awacs_smart_api_serviceᚋgraphᚋmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v model.User) graphql.Marshaler {
 	return ec._User(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNUser2ᚕᚖawacs_smart_api_serviceᚋgraphᚋmodelᚐUserᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.User) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNUser2ᚖawacs_smart_api_serviceᚋgraphᚋmodelᚐUser(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
 }
 
 func (ec *executionContext) marshalNUser2ᚖawacs_smart_api_serviceᚋgraphᚋmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v *model.User) graphql.Marshaler {

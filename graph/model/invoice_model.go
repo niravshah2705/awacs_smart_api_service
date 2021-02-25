@@ -109,6 +109,7 @@ type InvoiceDetails struct {
 	SupplierPhoneNo          string  `json:"PhonNo"`
 	SupplierCity             string  `json:"city"`
 	SupplierState            string  `json:"state"`
+	SupplierAddress1         string  `json:"BuyerAddress1"`
 	BuyerName                string  `json:"name"`
 	BuyerAwacsId             string  `json:"AwacsId"`
 	BuyerEmail               string  `json:"Email"`
@@ -117,6 +118,7 @@ type InvoiceDetails struct {
 	BuyerPhoneNo             string  `json:"PhonNo"`
 	BuyerCity                string  `json:"city"`
 	BuyerState               string  `json:"state"`
+	BuyerAddress1            string  `json:"BuyerAddress1"`
 	SchemePercentage         float64 `json:"SchemePercentage"`
 }
 
