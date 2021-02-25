@@ -34,14 +34,6 @@ func main() {
 	var dbObj db.DbObj
 
 	db.DB = make(map[string]*gorm.DB, 3)
-	db.DB["smartdb"], err = dbObj.GetConnection("smartdb", cfg)
-	if err != nil {
-		lg.Error("Error while connecting to smartdb", err)
-		log.Fatal(err)
-	}
-
-	dbObj.CreateConnectionPool(db.DB["smartdb"], 10, 20, 60)
-	lg.Info("Connection successful smartdb")
 
 	db.DB["awacs"], err = dbObj.GetConnection("awacs", cfg)
 	if err != nil {
@@ -51,6 +43,19 @@ func main() {
 
 	dbObj.CreateConnectionPool(db.DB["awacs"], 10, 20, 60)
 	lg.Info("Connection successful awacs")
+
+	cfg.DatabaseConfig.Host = "localhost"
+	cfg.DatabaseConfig.Port = 1434
+	cfg.DatabaseConfig.Password = "Awacs@20210221#"
+	db.DB["smartdb"], err = dbObj.GetConnection("smartdb", cfg)
+	if err != nil {
+		lg.Error("Error while connecting to smartdb", err)
+		log.Fatal(err)
+	}
+
+	dbObj.CreateConnectionPool(db.DB["smartdb"], 10, 20, 60)
+	lg.Info("Connection successful smartdb")
+
 	app.Start_Application(cfg)
 
 }
